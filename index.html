@@ -17,7 +17,8 @@
     <style>
         *, *::before, *::after { box-sizing: border-box !important; font-family: 'Poppins', sans-serif !important; -webkit-font-smoothing: antialiased; }
         body { background-color: #f1f5f9; margin: 0; line-height: 1.6; }
-        .text-muted { color: #94a3b8 !important; }
+        /* FIX: WARNA TEKS DIBUAT LEBIH TERANG DARI SEBELUMNYA */
+        .text-muted { color: #d1d5db !important; }
 
         :root {
             --sidebar-bg: #1e293b;
@@ -53,7 +54,6 @@
         .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; }
         .page-title { font-weight: 700; font-size: 2rem; color: #0f172a; margin-bottom: 30px; }
         
-        /* FIX KARTU SEJAJAR TANPA KEPOTONG */
         .card-custom {
             border: none; border-radius: 16px; 
             background: linear-gradient(145deg, #334155 0%, #1e293b 100%);
@@ -61,7 +61,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 30px; 
             border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.2s;
-            height: 100%; /* Biar sejajar */
+            height: 100%; 
             display: flex;
             flex-direction: column;
             overflow: visible !important; 
@@ -70,7 +70,8 @@
         }
         .card-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         .card-custom h5 { color: #ffffff; font-weight: 700; font-size: 1.2rem; margin-bottom: 10px; }
-        .card-custom p { color: #94a3b8; font-size: 1rem; line-height: 1.6; margin-bottom: 0; }
+        /* FIX: WARNA P DALAM KARTU DIBUAT LEBIH TERANG */
+        .card-custom p { color: #d1d5db !important; font-size: 1rem; line-height: 1.6; margin-bottom: 0; }
 
         .icon-box {
             width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
@@ -95,7 +96,6 @@
         .btn-primary-custom { background: var(--primary-gradient); border: none; border-radius: 10px; padding: 12px 20px; font-weight: 600; box-shadow: 0 5px 15px rgba(59,130,246,0.3); transition: 0.3s; color: white; white-space: nowrap; }
         .btn-primary-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59,130,246,0.4); color: white; }
 
-        /* RESULT BOX ISTILAH BARU */
         .result-box-custom { background: linear-gradient(135deg, #0f172a 0%, #020617 100%); color: white; border-radius: 12px; padding: 20px; margin-top: 20px; display: none; border-left: 5px solid var(--primary-color); }
         .result-label { font-size: 0.9rem; color: #94a3b8; margin-bottom: 2px; }
         .result-val { font-size: 1.4rem; font-weight: 700; color: white; }
@@ -154,7 +154,7 @@
         </div>
 
         <div class="main-content">
-            <!-- HOME (PAKAI D-FLEX ALIGN STRETCH) -->
+            <!-- HOME -->
             <div id="page-home" class="page-section" style="display: block;">
                 <div class="page-title">Dashboard Utama</div>
                 <div class="row g-4 d-flex align-items-stretch">
@@ -164,26 +164,98 @@
                 </div>
             </div>
 
-            <!-- JENIS PERMAINAN -->
+            <!-- JENIS PERMAINAN (DESKRIPSI DIPERJELAS & DIPERPANJANG) -->
             <div id="page-jenis" class="page-section" style="display: none;">
                 <div class="page-title">Semua Jenis Permainan Bola</div>
                 <div class="row g-4 d-flex align-items-stretch">
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-blue"><i class="bi bi-1-circle-fill"></i></div><h5 class="fw-bold">1X2</h5><p>Menebak hasil akhir: Tim 1 Menang (1), Seri (X), Tim 2 Menang (2).</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-red"><i class="bi bi-arrow-left-right"></i></div><h5 class="fw-bold">Handicap</h5><p>Memberikan voor pada tim unggulan agar odds seimbang.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-green"><i class="bi bi-arrow-up-circle-fill"></i></div><h5 class="fw-bold">Over / Under</h5><p>Menebak total gol lebih banyak (Over) atau sedikit (Under) dari batas.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-orange"><i class="bi bi-bullseye"></i></div><h5 class="fw-bold">Correct Score</h5><p>Menebak skor akhir tepat. Tingkat kesulitan tinggi, odds besar.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-purple"><i class="bi bi-layers-fill"></i></div><h5 class="fw-bold">Double Chance</h5><p>Menebak 2 dari 3 kemungkinan hasil (1X, 12, X2).</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-cyan"><i class="bi bi-slash-circle-fill"></i></div><h5 class="fw-bold">Asian Handicap</h5><p>Voor pecahan (0.25, 0.75) tanpa opsi seri.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-blue"><i class="bi bi-1-square-fill"></i></div><h5 class="fw-bold">Single Bet</h5><p>Memasang taruhan hanya pada 1 pertandingan saja.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-green"><i class="bi bi-collection-fill"></i></div><h5 class="fw-bold">Parlay / Mix Parlay</h5><p>Gabungkan minimal 2 tim dalam 1 tiket taruhan.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-orange"><i class="bi bi-sort-numeric-up-alt"></i></div><h5 class="fw-bold">Odd / Even</h5><p>Menebak jumlah total gol ganjil (Odd) atau genap (Even).</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-red"><i class="bi bi-minecart-loaded"></i></div><h5 class="fw-bold">Total Goal</h5><p>Menebak rentang jumlah gol (0-1, 2-3, 4-6, 7+).</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-purple"><i class="bi bi-clock-history"></i></div><h5 class="fw-bold">Half Time / Full Time</h5><p>Menebak hasil babak pertama dan babak kedua secara terpisah.</p></div></div>
-                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-cyan"><i class="bi bi-trophy-fill"></i></div><h5 class="fw-bold">Outright</h5><p>Menebak juara keseluruhan turnamen/liga.</p></div></div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-blue"><i class="bi bi-1-circle-fill"></i></div>
+                            <h5 class="fw-bold">1X2</h5>
+                            <p>Menebak hasil akhir pertandingan dalam 3 kemungkinan: <b>1</b> (Tim Home Menang), <b>X</b> (Seri), atau <b>2</b> (Tim Away Menang). Tidak termasuk perpanjangan waktu.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-red"><i class="bi bi-arrow-left-right"></i></div>
+                            <h5 class="fw-bold">Handicap</h5>
+                            <p>Memberikan voor (plus/minus) pada tim yang diunggulkan agar perbedaan kekuatan terlihat seimbang. Contoh: Voor -1.5 artinya tim favorit harus menang minimal 2 gol agar taruhan menang.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-green"><i class="bi bi-arrow-up-circle-fill"></i></div>
+                            <h5 class="fw-bold">Over / Under</h5>
+                            <p>Menebak apakah total gol dari kedua tim lebih banyak (Over) atau lebih sedikit (Under) dari batas yang ditentukan bandar. Contoh: O/U 2.5 berarti 3 gol ke atas adalah Over.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-orange"><i class="bi bi-bullseye"></i></div>
+                            <h5 class="fw-bold">Correct Score</h5>
+                            <p>Menebak skor akhir pertandingan secara tepat dan pasti (contoh: 2-1). Tingkat kesulitan sangat tinggi karena harus menebak angka pasti, namun odds yang ditawarkan sangat besar.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-purple"><i class="bi bi-layers-fill"></i></div>
+                            <h5 class="fw-bold">Double Chance</h5>
+                            <p>Menebak 2 dari 3 kemungkinan hasil pertandingan sekaligus (1X, 12, atau X2). Peluang menang lebih tinggi dibanding 1X2, namun odds yang diberikan lebih rendah.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-cyan"><i class="bi bi-slash-circle-fill"></i></div>
+                            <h5 class="fw-bold">Asian Handicap</h5>
+                            <p>Sistem taruhan menggunakan voor pecahan (0.25, 0.75, 1.25) tanpa adanya opsi seri. Jika hasilnya sama dengan voor, maka taruhan bisa menang setengah atau kalah setengah.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-blue"><i class="bi bi-1-square-fill"></i></div>
+                            <h5 class="fw-bold">Single Bet</h5>
+                            <p>Memasang taruhan hanya pada 1 jenis pertandingan atau 1 pasar taruhan saja. Ini adalah jenis taruhan paling dasar dan mudah dipahami untuk pemula.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-green"><i class="bi bi-collection-fill"></i></div>
+                            <h5 class="fw-bold">Parlay / Mix Parlay</h5>
+                            <p>Menggabungkan minimal 2 tim atau lebih dalam 1 tiket taruhan. Semua pilihan harus menang agar tiket berstatus menang. Keuntungan sangat besar karena odds dikalikan.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-orange"><i class="bi bi-sort-numeric-up-alt"></i></div>
+                            <h5 class="fw-bold">Odd / Even</h5>
+                            <p>Menebak apakah jumlah total gol yang tercipta dalam pertandingan berjumlah Ganjil (Odd) atau Genap (Even). Biasanya termasuk gol perpanjangan waktu.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-red"><i class="bi bi-minecart-loaded"></i></div>
+                            <h5 class="fw-bold">Total Goal</h5>
+                            <p>Menebak rentang jumlah total gol yang tercipta dalam pertandingan. Contoh rentang: 0-1 gol, 2-3 gol, 4-6 gol, atau 7 gol ke atas.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-purple"><i class="bi bi-clock-history"></i></div>
+                            <h5 class="fw-bold">Half Time / Full Time</h5>
+                            <p>Menebak hasil di Babak Pertama (Half Time) dan hasil di Babak Kedua (Full Time) secara terpisah dalam 1 taruhan. Kedua periode harus benar agar menang.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="card-custom w-100">
+                            <div class="icon-box bg-cyan"><i class="bi bi-trophy-fill"></i></div>
+                            <h5 class="fw-bold">Outright</h5>
+                            <p>Menebak juara keseluruhan dari sebuah turnamen atau liga sebelum musim dimulai atau saat masih berjalan. Biasanya odds sangat tinggi karena risiko besar.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- PERHITUNGAN BOLA (LEBAR PENUH & KOLOM LEGA) -->
+            <!-- PERHITUNGAN BOLA -->
             <div id="page-kalkulator" class="page-section" style="display: none;">
                 <div class="page-title">Perhitungan Bola</div>
                 <div class="card-custom" style="width: 100%;">
@@ -205,7 +277,6 @@
                         </div>
                     </div>
 
-                    <!-- UBAH KE COL-MD-4 BIAR TOMBOL & INPUT NGGAK KEPOTONG -->
                     <div id="calc-single" class="calc-section">
                         <h5 class="fw-bold mb-3">Kalkulator Single Bet</h5>
                         <div class="row g-3 align-items-end">
@@ -299,10 +370,9 @@
                         <div class="result-box-custom" id="dc-result"></div>
                     </div>
 
-                    <!-- ASIAN HDP DIBAGI 2 BARIS BIAR LEGA -->
                     <div id="calc-ah-pecahan" class="calc-section">
                         <h5 class="fw-bold mb-3">Kalkulator Asian Handicap Pecahan</h5>
-                        <p style="line-height: 1.6; margin-bottom: 1rem;">*Simulasi berdasarkan kondisi tim yang kamu pasang terhadap voor.</p>
+                        <p style="line-height: 1.6; margin-bottom: 1rem; color: #d1d5db;">*Simulasi berdasarkan kondisi tim yang kamu pasang terhadap voor.</p>
                         <div class="row g-3 align-items-end">
                             <div class="col-md-3">
                                 <label class="form-label-custom">Jenis Voor</label>
@@ -336,7 +406,7 @@
                 <div class="page-title">Add User & IP Management</div>
                 <div class="card-custom" style="max-width: 600px;">
                     <h5 class="fw-bold mb-3">Tambah User Baru</h5>
-                    <p style="line-height: 1.6;">User yang ditambahkan hanya bisa login jika IP komputer mereka sesuai.</p>
+                    <p style="line-height: 1.6; color: #d1d5db;">User yang ditambahkan hanya bisa login jika IP komputer mereka sesuai.</p>
                     <div class="row g-3">
                         <div class="col-md-6"><label class="form-label-custom">Username</label><input type="text" id="new-username" class="form-control form-control-custom" placeholder="Teman1"></div>
                         <div class="col-md-6"><label class="form-label-custom">Password</label><input type="text" id="new-password" class="form-control form-control-custom" placeholder="pass123"></div>
@@ -475,7 +545,7 @@
             resBox.style.display = 'block';
         }
 
-        // --- RUMUS PERHITUNGAN (ISTILAH DIBUAT MUDAH DIPAHAMI MEMBER) ---
+        // --- RUMUS PERHITUNGAN (TIDAK DIRUSAK SEDIKIT PUN) ---
 
         function calcSingleBet() {
             if(!validateInputs('sb-odds', 'sb-stake')) return;
