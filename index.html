@@ -22,20 +22,14 @@
             --primary-color: #3b82f6;
             --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             --bg-outer: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%);
-            
-            /* === TAMBAHAN: LINK BACKGROUND LUAR & DALAM === */
-            /* CARA PAKAI: Ganti tulisan di dalam url('...') dengan link gambarmu */
-            --bg-outer-image: url(''); /* LETAKKAN LINK BACKGROUND LUAR (LOGIN) DISINI */
-            --bg-inner-image: url(''); /* LETAKKAN LINK BACKGROUND DALAM (DASHBOARD) DISINI */
+            --bg-outer-image: url(''); /* LINK BACKGROUND LUAR */
+            --bg-inner-image: url(''); /* LINK BACKGROUND DALAM */
         }
 
-        /* FIX: BACKGROUND DALAM (DASHBOARD) */
         body { 
             background-color: #f1f5f9; margin: 0; line-height: 1.6; 
             background-image: var(--bg-inner-image);
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
+            background-size: cover; background-attachment: fixed; background-position: center;
         }
         .text-muted { color: #d1d5db !important; }
 
@@ -43,17 +37,35 @@
         html.logged-in #dashboard { display: flex !important; }
         html:not(.logged-in) #login-page { display: flex !important; }
 
-        /* FIX: BACKGROUND LUAR (LOGIN) */
+        /* FIX: LOGIN PAGE UKURAN BESAR & CANTIK */
         #login-page { 
             background: var(--bg-outer); 
             background-image: var(--bg-outer-image);
-            background-size: cover;
-            background-position: center;
+            background-size: cover; background-position: center;
             justify-content: center; align-items: center; height: 100vh; 
         }
-        .login-card { border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .form-control-login { border-radius: 10px; padding: 12px 16px; border: 2px solid #e2e8f0; background: #f8fafc; font-weight: 500; }
-        .form-control-login:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
+        .login-card { 
+            border-radius: 20px; border: none; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+            width: 100%; max-width: 520px; /* DIPERBESAR */
+            position: relative;
+            overflow: visible;
+            border-top: 6px solid var(--primary-color);
+        }
+        /* IKON LINGKARAN DI ATAS LOGIN */
+        .login-icon-wrapper {
+            width: 90px; height: 90px; 
+            background: var(--primary-gradient); 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            margin: -65px auto 20px auto; 
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            border: 8px solid #ffffff;
+        }
+        .login-icon-wrapper i { font-size: 2.5rem; color: white; }
+        
+        .form-control-login { border-radius: 12px; padding: 14px 18px; border: 2px solid #e2e8f0; background: #f8fafc; font-weight: 500; font-size: 1.1rem; }
+        .form-control-login:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
 
         .sidebar {
             height: 100vh; background: var(--sidebar-bg); color: white; position: fixed; width: 280px;
@@ -68,34 +80,30 @@
         .sidebar .nav-link:hover { background: #334155; color: white; }
         .sidebar .nav-link.active { background: var(--primary-gradient); color: white; box-shadow: 0 5px 15px rgba(59,130,246,0.3); }
         .sidebar .nav-link i { margin-right: 12px; font-size: 1.2rem; }
-        
-        /* FIX: LOGOUT DINAIIKAN (HAPUS MARGIN-TOP: AUTO) */
         .sidebar-footer { margin-top: 30px; padding: 10px 12px; border-top: 1px solid #334155; }
         
         .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; }
         .page-title { font-weight: 700; font-size: 2rem; color: #0f172a; margin-bottom: 30px; }
         
+        /* FIX: CARD CUSTOM JADI CANTIK (GRADIENT & SHADOW) */
         .card-custom {
             border: none; border-radius: 16px; 
             background: linear-gradient(145deg, #334155 0%, #1e293b 100%);
-            color: #e2e8f0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 30px; 
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.2s;
+            color: #e2e2e2;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 30px; 
+            border-top: 4px solid var(--primary-color);
+            transition: transform 0.2s, box-shadow 0.2s;
             height: 100%; 
-            display: flex;
-            flex-direction: column;
-            overflow: visible !important; 
-            white-space: normal !important; 
-            word-wrap: break-word !important; 
+            display: flex; flex-direction: column;
+            overflow: visible; white-space: normal; word-wrap: break-word; 
         }
-        .card-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .card-custom:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(59,130,246,0.2); }
         .card-custom h5 { color: #ffffff; font-weight: 700; font-size: 1.2rem; margin-bottom: 10px; }
         .card-custom p { color: #d1d5db !important; font-size: 1rem; line-height: 1.6; margin-bottom: 0; }
 
         .icon-box {
-            width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; color: white; margin-bottom: 15px;
+            width: 55px; height: 55px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .bg-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .bg-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
@@ -113,7 +121,7 @@
         .form-control-custom:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.2); background: #0f172a; color: white; }
         select.form-control-custom { overflow: visible !important; white-space: normal !important; }
         
-        .btn-primary-custom { background: var(--primary-gradient); border: none; border-radius: 10px; padding: 12px 20px; font-weight: 600; box-shadow: 0 5px 15px rgba(59,130,246,0.3); transition: 0.3s; color: white; white-space: nowrap; }
+        .btn-primary-custom { background: var(--primary-gradient); border: none; border-radius: 12px; padding: 14px 24px; font-weight: 600; box-shadow: 0 5px 15px rgba(59,130,246,0.3); transition: 0.3s; color: white; white-space: nowrap; letter-spacing: 0.5px; }
         .btn-primary-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59,130,246,0.4); color: white; }
 
         .result-box-custom { background: linear-gradient(135deg, #0f172a 0%, #020617 100%); color: white; border-radius: 12px; padding: 20px; margin-top: 20px; display: none; border-left: 5px solid var(--primary-color); }
@@ -132,23 +140,28 @@
 <body>
 
     <div id="login-page">
-        <div class="card login-card" style="width: 420px;">
-            <div class="card-body p-5">
-                <h3 class="text-center mb-2 fw-bold text-dark">Welcome Back!</h3>
+        <!-- UKURAN DIPERBESAR -->
+        <div class="login-card">
+            <div class="card-body p-5 pt-0">
+                <!-- IKON LOGIN -->
+                <div class="login-icon-wrapper">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <h3 class="text-center mb-2 fw-bold text-dark">SILAHKAN LOGIN</h3>
                 <p class="text-center text-muted mb-4">Masuk ke dashboard Danatoto</p>
                 
                 <form id="login-form" onsubmit="login(event)">
                     <div id="login-error" class="alert alert-danger py-2 text-center" style="font-size: 0.9rem; border-radius: 10px; display: none;"></div>
                     <div class="mb-3">
                         <label class="form-label-custom text-dark">Username</label>
-                        <input type="text" id="username" class="form-control form-control-login" placeholder="" required>
+                        <input type="text" id="username" class="form-control form-control-login" placeholder="Masukkan username" required>
                     </div>
                     <div class="mb-4">
                         <label class="form-label-custom text-dark">Password</label>
-                        <input type="password" id="password" class="form-control form-control-login" placeholder="" required>
+                        <input type="password" id="password" class="form-control form-control-login" placeholder="Masukkan password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary-custom w-100 py-3">MASUK</button>
-                    <p class="text-center text-muted mt-3 small" style="font-size: 0.7rem;">Sistem dilindungi IP Filtering</p>
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3" style="font-size: 1.1rem;">MASUK KE SISTEM</button>
+                    <p class="text-center text-muted mt-3 small" style="font-size: 0.8rem;"><i class="bi bi-shield-check"></i> Sistem dilindungi IP Filtering</p>
                 </form>
             </div>
         </div>
@@ -349,7 +362,7 @@
                 </div>
             </div>
 
-            <!-- FIX: ADD USER DILEBARKAN JADI 800PX -->
+            <!-- ADD USER -->
             <div id="page-add-user" class="page-section" style="display: none;">
                 <div class="page-title">Add User & IP Management</div>
                 <div class="card-custom" style="max-width: 800px;">
@@ -493,8 +506,7 @@
             resBox.style.display = 'block';
         }
 
-        // --- RUMUS PERHITUNGAN (TIDAK DIRUSAK SEDIKIT PUN) ---
-
+        // --- RUMUS PERHITUNGAN TIDAK DIRUSAK ---
         function calcSingleBet() {
             if(!validateInputs('sb-odds', 'sb-stake')) return;
             const odds = parseFloat(document.getElementById('sb-odds').value);
@@ -612,26 +624,16 @@
             let statusText = "";
 
             if(voor === 0.25) {
-                if(status === 'win-full') { 
-                    profit = (odds - 1) * stake; statusText = "Menang Penuh"; 
-                } else if(status === 'win-half') { 
-                    profit = (odds - 1) * stake; statusText = "Menang Penuh"; 
-                } else if(status === 'lose-half') { 
-                    profit = -halfStake; statusText = "Kalah Setengah (Seri)"; 
-                } else if(status === 'lose-full') { 
-                    profit = -stake; statusText = "Kalah Penuh"; 
-                }
+                if(status === 'win-full') { profit = (odds - 1) * stake; statusText = "Menang Penuh"; }
+                else if(status === 'win-half') { profit = (odds - 1) * stake; statusText = "Menang Penuh"; }
+                else if(status === 'lose-half') { profit = -halfStake; statusText = "Kalah Setengah (Seri)"; }
+                else if(status === 'lose-full') { profit = -stake; statusText = "Kalah Penuh"; }
             } 
             else if(voor === 0.75) {
-                if(status === 'win-full') { 
-                    profit = (odds - 1) * stake; statusText = "Menang Penuh (Bedanya 2+ gol)"; 
-                } else if(status === 'win-half') { 
-                    profit = ((odds - 1) / 2) * stake; statusText = "Menang Setengah (Bedanya 1 gol)"; 
-                } else if(status === 'lose-half') { 
-                    profit = -halfStake; statusText = "Kalah Setengah"; 
-                } else if(status === 'lose-full') { 
-                    profit = -stake; statusText = "Kalah Penuh"; 
-                }
+                if(status === 'win-full') { profit = (odds - 1) * stake; statusText = "Menang Penuh (Bedanya 2+ gol)"; }
+                else if(status === 'win-half') { profit = ((odds - 1) / 2) * stake; statusText = "Menang Setengah (Bedanya 1 gol)"; }
+                else if(status === 'lose-half') { profit = -halfStake; statusText = "Kalah Setengah"; }
+                else if(status === 'lose-full') { profit = -stake; statusText = "Kalah Penuh"; }
             }
 
             let profitClass = profit >= 0 ? 'profit' : 'loss';
