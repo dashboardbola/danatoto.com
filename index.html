@@ -2,47 +2,59 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0a0a0a; color: #e5e7eb; font-family: 'Segoe UI', sans-serif; }
+        .glass { background: rgba(20, 20, 20, 0.8); border: 1px solid #333; }
+    </style>
 </head>
-<body class="bg-black text-white">
+<body>
 
-    <!-- Area Login -->
     <div id="login-screen" class="flex items-center justify-center h-screen">
-        <div class="bg-slate-900 p-8 rounded-lg border border-amber-600">
-            <h2 class="mb-4 font-bold text-amber-500">LOGIN</h2>
-            <input type="password" id="pass" placeholder="Password" class="w-full p-2 bg-black border border-slate-700 mb-4">
-            <button onclick="login()" class="w-full bg-amber-600 p-2">MASUK</button>
+        <div class="glass p-8 rounded-2xl w-96 shadow-2xl">
+            <h2 class="text-2xl font-bold text-amber-500 mb-6 text-center">ADMIN LOGIN</h2>
+            <input type="text" id="user" placeholder="Username" class="w-full p-3 bg-black border border-slate-700 rounded-lg mb-4">
+            <input type="password" id="pass" placeholder="Password" class="w-full p-3 bg-black border border-slate-700 rounded-lg mb-4">
+            <button onclick="login()" class="w-full bg-amber-600 hover:bg-amber-700 p-3 rounded-lg font-bold transition">MASUK</button>
         </div>
     </div>
 
-    <!-- Area Dashboard -->
-    <div id="dashboard" class="hidden flex">
-        <div class="w-64 bg-slate-900 h-screen p-6">
-            <h2 class="text-amber-500 font-bold mb-6">MENU</h2>
-            <button onclick="alert('Pilih Kalkulator di kanan')" class="w-full text-left p-2 hover:bg-slate-800">Perhitungan Bola</button>
+    <div id="dashboard" class="hidden flex h-screen">
+        <div class="w-64 glass p-6">
+            <h2 class="text-amber-500 font-bold mb-8">MENU BOLA</h2>
+            <ul class="space-y-4">
+                <li><button onclick="pilihMenu('Single Bet')" class="hover:text-amber-500 transition">⚽ Single Bet</button></li>
+                <li><button onclick="pilihMenu('Mix Parlay')" class="hover:text-amber-500 transition">⚽ Mix Parlay</button></li>
+                <li><button onclick="pilihMenu('Handicap')" class="hover:text-amber-500 transition">⚽ Handicap</button></li>
+                <li><button onclick="pilihMenu('1X2')" class="hover:text-amber-500 transition">⚽ 1X2</button></li>
+            </ul>
         </div>
-        <div class="p-10">
-            <h1 class="text-2xl font-bold mb-4">Pilih Kalkulator</h1>
-            <select id="kalk" onchange="pilih()" class="bg-slate-800 p-2 border border-amber-600">
-                <option value="">-- Pilih --</option>
-                <option value="Single Bet">Single Bet</option>
-                <option value="Mix Parlay">Mix Parlay</option>
-            </select>
-            <div id="calc-area" class="mt-4"></div>
+        <div class="flex-1 p-10">
+            <h1 id="title" class="text-3xl font-bold mb-6 text-amber-500">Pilih Menu di Sidebar</h1>
+            <div id="calc-area" class="glass p-8 rounded-2xl w-full max-w-lg hidden">
+                <input type="number" id="input1" placeholder="Masukkan Odds" class="w-full p-3 bg-black border border-slate-700 rounded-lg mb-4">
+                <input type="number" id="input2" placeholder="Masukkan Modal" class="w-full p-3 bg-black border border-slate-700 rounded-lg mb-4">
+                <button onclick="hitung()" class="w-full bg-amber-600 p-3 rounded-lg font-bold">HITUNG HASIL</button>
+                <div id="hasil" class="mt-6 text-xl font-bold text-center text-green-500"></div>
+            </div>
         </div>
     </div>
 
     <script>
         function login() {
-            if(document.getElementById('pass').value === "123") {
+            if(document.getElementById('user').value === "admin" && document.getElementById('pass').value === "123") {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
-            } else { alert("Password Salah!"); }
+            } else { alert("Username atau Password Salah!"); }
         }
-        function pilih() {
-            let jenis = document.getElementById('kalk').value;
-            document.getElementById('calc-area').innerHTML = `<h3>${jenis}</h3><input type="number" class="bg-black p-2 border border-slate-600" placeholder="Masukkan Odds">`;
+        function pilihMenu(m) {
+            document.getElementById('title').innerText = m;
+            document.getElementById('calc-area').classList.remove('hidden');
+        }
+        function hitung() {
+            let o = document.getElementById('input1').value;
+            let m = document.getElementById('input2').value;
+            document.getElementById('hasil').innerText = "Total Kemenangan: " + (o * m);
         }
     </script>
 </body>
