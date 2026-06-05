@@ -8,46 +8,134 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { background-color: #f8f9fa; }
+        :root {
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+            --primary-color: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: var(--bg-main); 
+            color: var(--text-dark);
+        }
+
+        /* LOGIN STYLES */
+        #login-page {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%);
+        }
+        .login-card {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .login-card .card-body { padding: 40px; }
+        .form-control-login {
+            border-radius: 10px; padding: 12px 16px; border: 2px solid #e2e8f0; background: #f8fafc;
+            font-weight: 500;
+        }
+        .form-control-login:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+
+        /* SIDEBAR STYLES */
         .sidebar {
             height: 100vh;
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            background: var(--sidebar-bg);
             color: white;
             position: fixed;
             width: 280px;
-            padding-top: 20px;
-            transition: all 0.3s;
+            padding: 20px 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
         }
-        .sidebar .brand { color: #38bdf8; font-weight: bold; font-size: 1.5rem; text-align: center; margin-bottom: 30px; }
+        .brand-logo {
+            font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 40px; letter-spacing: 1px;
+            color: white; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        .brand-logo i { color: var(--primary-color); margin-right: 5px; }
         .sidebar .nav-link {
-            color: #cbd5e1; padding: 12px 20px; margin: 5px 10px; border-radius: 8px; transition: 0.3s;
+            color: #94a3b8; padding: 14px 25px; margin: 4px 12px; border-radius: 12px; transition: 0.3s; font-weight: 500;
         }
-        .sidebar .nav-link:hover, .sidebar .nav-link.active {
-            background-color: #38bdf8; color: #0f172a; font-weight: bold;
+        .sidebar .nav-link:hover { background: var(--sidebar-hover); color: white; }
+        .sidebar .nav-link.active {
+            background: var(--primary-gradient); color: white; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
         }
-        .main-content { margin-left: 280px; padding: 30px; }
-        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: none; border-radius: 10px; }
+        .sidebar .nav-link i { margin-right: 12px; font-size: 1.2rem; }
+
+        /* MAIN CONTENT STYLES */
+        .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; }
+        .page-title { font-weight: 700; font-size: 2rem; color: var(--text-dark); margin-bottom: 30px; }
+
+        /* CARD STYLES */
+        .card-custom {
+            border: none; border-radius: 16px; background: var(--card-bg);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04); padding: 30px; transition: transform 0.2s;
+        }
+        .card-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        
+        /* JENIS PERMAINAN CARD ICON */
+        .icon-box {
+            width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: white; margin-bottom: 15px; background: var(--primary-gradient);
+        }
+
+        /* FORM STYLES */
+        .form-label-custom { font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; }
+        .form-control-custom {
+            border: 2px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: 500; background: #f8fafc;
+            transition: 0.3s;
+        }
+        .form-control-custom:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); background: white; }
+        
+        .btn-primary-custom {
+            background: var(--primary-gradient); border: none; border-radius: 10px; padding: 12px 24px;
+            font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            transition: 0.3s;
+        }
+        .btn-primary-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
+
+        /* RESULT BOX */
+        .result-box-custom {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 12px;
+            padding: 20px; margin-top: 20px; display: none; border-left: 5px solid var(--primary-color);
+        }
+        .result-label { font-size: 0.85rem; color: #94a3b8; margin-bottom: 2px; }
+        .result-val { font-size: 1.5rem; font-weight: 700; color: white; }
+        .result-val.profit { color: #34d399; }
+        .result-val.loss { color: #f87171; }
+
         .calc-section { display: none; }
-        .result-box { background: #f1f5f9; border-left: 5px solid #38bdf8; padding: 15px; border-radius: 5px; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <!-- ================= LOGIN PAGE ================= -->
-    <div id="login-page" class="d-flex justify-content-center align-items-center vh-100" style="background: linear-gradient(135deg, #0f172a, #38bdf8);">
-        <div class="card card-shadow p-5" style="width: 400px;">
-            <h3 class="text-center mb-4 fw-bold text-primary"><i class="bi bi-gift"></i> Gift Hub Login</h3>
-            <div id="login-error" class="alert alert-danger d-none">Username atau Password salah!</div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Username</label>
-                <input type="text" id="username" class="form-control" placeholder="Masukkan username">
+    <div id="login-page" class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card login-card" style="width: 420px;">
+            <div class="card-body">
+                <h3 class="text-center mb-2 fw-bold text-dark">Welcome Back!</h3>
+                <p class="text-center text-muted mb-4">Masuk ke dashboard Gift Hub</p>
+                
+                <div id="login-error" class="alert alert-danger d-none py-2 text-center" style="font-size: 0.9rem; border-radius: 10px;">Username atau Password salah!</div>
+                
+                <div class="mb-3">
+                    <label class="form-label-custom">Username</label>
+                    <input type="text" id="username" class="form-control form-control-login" placeholder="admin">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-custom">Password</label>
+                    <input type="password" id="password" class="form-control form-control-login" placeholder="12345">
+                </div>
+                <button class="btn btn-primary-custom w-100 py-3" onclick="login()">MASUK</button>
             </div>
-            <div class="mb-4">
-                <label class="form-label fw-bold">Password</label>
-                <input type="password" id="password" class="form-control" placeholder="Masukkan password">
-            </div>
-            <button class="btn btn-primary w-100 fw-bold" onclick="login()">MASUK</button>
         </div>
     </div>
 
@@ -55,63 +143,82 @@
     <div id="dashboard" class="d-none">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="brand"><i class="bi bi-gift-fill"></i> GIFT HUB</div>
+            <div class="brand-logo"><i class="bi bi-gift-fill"></i> GIFT HUB</div>
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link active" href="#" onclick="showPage('page-home', this)">
-                        <i class="bi bi-house-door-fill me-2"></i> Dashboard
+                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" onclick="showPage('page-jenis', this)">
-                        <i class="bi bi-trophy-fill me-2"></i> Jenis Permainan Bola
+                        <i class="bi bi-trophy-fill"></i> Jenis Permainan
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" onclick="showPage('page-kalkulator', this)">
-                        <i class="bi bi-calculator-fill me-2"></i> Perhitungan Bola
+                        <i class="bi bi-calculator-fill"></i> Perhitungan Bola
                     </a>
                 </li>
             </ul>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Content Area -->
         <div class="main-content">
             
-            <!-- PAGE 1: HOME -->
+            <!-- HOME -->
             <div id="page-home" class="page-section">
-                <h2 class="mb-4 fw-bold">Dashboard Utama</h2>
-                <div class="card card-shadow p-4">
-                    <h4><i class="bi bi-lightning-fill text-warning"></i> Selamat Datang di Gift Hub!</h4>
-                    <p class="text-muted mt-2">Gunakan menu di samping untuk melihat jenis permainan atau menghitung odds taruhan bola Anda.</p>
-                </div>
-            </div>
-
-            <!-- PAGE 2: JENIS PERMAINAN -->
-            <div id="page-jenis" class="page-section d-none">
-                <h2 class="mb-4 fw-bold">Jenis Permainan Bola</h2>
+                <div class="page-title">Dashboard</div>
                 <div class="row g-4">
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">1X2</h5><p class="text-muted mb-0">Menebak hasil akhir pertandingan: Tim 1 Menang (1), Seri (X), atau Tim 2 Menang (2).</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Handicap</h5><p class="text-muted mb-0">Memberikan voor pada tim yang diunggulkan agar odds lebih seimbang.</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Over / Under</h5><p class="text-muted mb-0">Menebak apakah total gol dalam pertandingan lebih banyak (Over) atau lebih sedikit (Under) dari batas yang ditentukan.</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Correct Score</h5><p class="text-muted mb-0">Menebak skor akhir pertandingan secara tepat. Odds sangat besar karena tingkat kesulitan tinggi.</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Double Chance</h5><p class="text-muted mb-0">Menebak 2 dari 3 kemungkinan hasil pertandingan (1X, 12, X2). Peluang menang lebih tinggi, odds lebih rendah.</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Asian Handicap</h5><p class="text-muted mb-0">Sistem handicap tanpa opsi seri, menggunakan voor pecahan (0.25, 0.75) dan bulat (0.5, 1.0).</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Single Bet</h5><p class="text-muted mb-0">Memasang taruhan pada 1 jenis pertandingan saja.</p></div></div>
-                    <div class="col-md-4"><div class="card card-shadow p-3 h-100"><h5 class="text-primary">Parlay / Mix Parlay</h5><p class="text-muted mb-0">Menggabungkan minimal 2 tim dalam 1 tiket taruhan. Semua tim harus menang agar taruhan berstatus menang.</p></div></div>
+                    <div class="col-md-4">
+                        <div class="card-custom text-center p-4">
+                            <i class="bi bi-trophy-fill text-warning" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 fw-bold">Jenis Permainan</h5>
+                            <p class="text-muted">Lihat 8 jenis taruhan bola populer</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-custom text-center p-4">
+                            <i class="bi bi-calculator-fill text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 fw-bold">Kalkulator Odds</h5>
+                            <p class="text-muted">Hitung keuntungan taruhan dengan akurat</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card-custom text-center p-4">
+                            <i class="bi bi-shield-check text-success" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 fw-bold">Validasi Input</h5>
+                            <p class="text-muted">Sistem otomatis cegah odds & nominal salah</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- PAGE 3: PERHITUNGAN BOLA -->
+            <!-- JENIS PERMAINAN -->
+            <div id="page-jenis" class="page-section d-none">
+                <div class="page-title">Jenis Permainan Bola</div>
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-1-circle-fill"></i></div><h5 class="fw-bold">1X2</h5><p class="text-muted mb-0">Menebak hasil akhir: Tim 1 Menang (1), Seri (X), atau Tim 2 Menang (2).</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-arrow-left-right"></i></div><h5 class="fw-bold">Handicap</h5><p class="text-muted mb-0">Memberikan voor pada tim unggulan agar odds seimbang.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-arrow-up-circle-fill"></i></div><h5 class="fw-bold">Over / Under</h5><p class="text-muted mb-0">Menebak total gol lebih banyak (Over) atau sedikit (Under) dari batas.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-bullseye"></i></div><h5 class="fw-bold">Correct Score</h5><p class="text-muted mb-0">Menebak skor akhir tepat. Tingkat kesulitan tinggi, odds besar.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-layers-fill"></i></div><h5 class="fw-bold">Double Chance</h5><p class="text-muted mb-0">Menebak 2 dari 3 kemungkinan hasil (1X, 12, X2). Peluang menang tinggi.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-slash-circle-fill"></i></div><h5 class="fw-bold">Asian Handicap</h5><p class="text-muted mb-0">Voor pecahan (0.25, 0.75) tanpa opsi seri. Ada menang/kalah setengah.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-1-square-fill"></i></div><h5 class="fw-bold">Single Bet</h5><p class="text-muted mb-0">Memasang taruhan hanya pada 1 pertandingan saja.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box"><i class="bi bi-collection-fill"></i></div><h5 class="fw-bold">Parlay / Mix Parlay</h5><p class="text-muted mb-0">Gabungkan minimal 2 tim. Semua harus menang agar taruhan berstatus menang.</p></div></div>
+                </div>
+            </div>
+
+            <!-- PERHITUNGAN BOLA -->
             <div id="page-kalkulator" class="page-section d-none">
-                <h2 class="mb-4 fw-bold">Perhitungan Bola</h2>
-                <div class="card card-shadow p-4">
+                <div class="page-title">Perhitungan Bola</div>
+                <div class="card-custom" style="max-width: 800px;">
                     
                     <div class="row mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Pilih Jenis Perhitungan:</label>
-                            <select id="calc-filter" class="form-select" onchange="showCalculator()">
-                                <option value="">-- Pilih Perhitungan --</option>
+                        <div class="col-md-8">
+                            <label class="form-label-custom">Pilih Jenis Perhitungan</label>
+                            <select id="calc-filter" class="form-control form-control-custom" onchange="showCalculator()">
+                                <option value="">-- Pilih Jenis Perhitungan --</option>
                                 <option value="calc-single">Single Bet</option>
                                 <option value="calc-parlay">Parlay</option>
                                 <option value="calc-mix-parlay">Mix Parlay</option>
@@ -127,126 +234,126 @@
 
                     <!-- KALKULATOR SINGLE BET -->
                     <div id="calc-single" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Single Bet</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Odds (Desimal)</label><input type="number" id="sb-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-4"><label class="form-label">Taruhan (Rp)</label><input type="number" id="sb-stake" class="form-control" min="1000"></div>
-                            <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="calcSingleBet()">Hitung</button></div>
+                        <h5 class="fw-bold mb-3">Kalkulator Single Bet</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="sb-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-5"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="sb-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcSingleBet()">Hitung</button></div>
                         </div>
-                        <div class="result-box d-none" id="sb-result"></div>
+                        <div class="result-box-custom" id="sb-result"></div>
                     </div>
 
                     <!-- KALKULATOR PARLAY -->
                     <div id="calc-parlay" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Parlay</h5>
+                        <h5 class="fw-bold mb-3">Kalkulator Parlay</h5>
                         <div class="row g-3">
-                            <div class="col-md-3"><label class="form-label">Odds 1</label><input type="number" id="p-odds1" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-3"><label class="form-label">Odds 2</label><input type="number" id="p-odds2" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-3"><label class="form-label">Odds 3</label><input type="number" id="p-odds3" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-3"><label class="form-label">Taruhan (Rp)</label><input type="number" id="p-stake" class="form-control" min="1000"></div>
+                            <div class="col-md-4"><label class="form-label-custom">Odds 1</label><input type="number" id="p-odds1" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-4"><label class="form-label-custom">Odds 2</label><input type="number" id="p-odds2" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-4"><label class="form-label-custom">Odds 3</label><input type="number" id="p-odds3" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-8"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="p-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-4"><button class="btn btn-primary-custom w-100 py-3" onclick="calcParlay()">Hitung Parlay</button></div>
                         </div>
-                        <button class="btn btn-primary mt-3" onclick="calcParlay()">Hitung Parlay</button>
-                        <div class="result-box d-none" id="p-result"></div>
+                        <div class="result-box-custom" id="p-result"></div>
                     </div>
 
                     <!-- KALKULATOR MIX PARLAY -->
                     <div id="calc-mix-parlay" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Mix Parlay <small class="text-muted">(Centang jika Seri/Push)</small></h5>
+                        <h5 class="fw-bold mb-3">Kalkulator Mix Parlay <small class="text-muted fw-normal">(Centang jika Seri/Push)</small></h5>
                         <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">Odds 1</label><input type="number" id="mp-odds1" step="0.01" class="form-control" min="1.01">
-                                <div class="form-check mt-1"><input class="form-check-input" type="checkbox" id="mp-seri1"><label class="form-check-label">Seri</label></div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Odds 1</label><input type="number" id="mp-odds1" step="0.01" class="form-control form-control-custom" min="1.01">
+                                <div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="mp-seri1"><label class="form-check-label text-muted small">Seri/Push</label></div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Odds 2</label><input type="number" id="mp-odds2" step="0.01" class="form-control" min="1.01">
-                                <div class="form-check mt-1"><input class="form-check-input" type="checkbox" id="mp-seri2"><label class="form-check-label">Seri</label></div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Odds 2</label><input type="number" id="mp-odds2" step="0.01" class="form-control form-control-custom" min="1.01">
+                                <div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="mp-seri2"><label class="form-check-label text-muted small">Seri/Push</label></div>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Odds 3</label><input type="number" id="mp-odds3" step="0.01" class="form-control" min="1.01">
-                                <div class="form-check mt-1"><input class="form-check-input" type="checkbox" id="mp-seri3"><label class="form-check-label">Seri</label></div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Odds 3</label><input type="number" id="mp-odds3" step="0.01" class="form-control form-control-custom" min="1.01">
+                                <div class="form-check mt-2"><input class="form-check-input" type="checkbox" id="mp-seri3"><label class="form-check-label text-muted small">Seri/Push</label></div>
                             </div>
-                            <div class="col-md-3"><label class="form-label">Taruhan (Rp)</label><input type="number" id="mp-stake" class="form-control" min="1000"></div>
+                            <div class="col-md-8"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="mp-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-4"><button class="btn btn-primary-custom w-100 py-3" onclick="calcMixParlay()">Hitung Mix Parlay</button></div>
                         </div>
-                        <button class="btn btn-primary mt-3" onclick="calcMixParlay()">Hitung Mix Parlay</button>
-                        <div class="result-box d-none" id="mp-result"></div>
+                        <div class="result-box-custom" id="mp-result"></div>
                     </div>
 
-                    <!-- KALKULATOR HANDICAP / O/U / CS / 1X2 / DC (Rumus Dasar) -->
+                    <!-- KALKULATOR HANDICAP / O/U / CS / 1X2 / DC -->
                     <div id="calc-handicap" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Handicap</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Odds (Desimal)</label><input type="number" id="h-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-4"><label class="form-label">Taruhan (Rp)</label><input type="number" id="h-stake" class="form-control" min="1000"></div>
-                            <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="calcGeneric('h-odds', 'h-stake', 'h-result')">Hitung</button></div>
+                        <h5 class="fw-bold mb-3">Kalkulator Handicap</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="h-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-5"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="h-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcGeneric('h-odds', 'h-stake', 'h-result')">Hitung</button></div>
                         </div>
-                        <div class="result-box d-none" id="h-result"></div>
+                        <div class="result-box-custom" id="h-result"></div>
                     </div>
 
                     <div id="calc-ou" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Over / Under</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Odds (Desimal)</label><input type="number" id="ou-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-4"><label class="form-label">Taruhan (Rp)</label><input type="number" id="ou-stake" class="form-control" min="1000"></div>
-                            <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="calcGeneric('ou-odds', 'ou-stake', 'ou-result')">Hitung</button></div>
+                        <h5 class="fw-bold mb-3">Kalkulator Over / Under</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="ou-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-5"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="ou-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcGeneric('ou-odds', 'ou-stake', 'ou-result')">Hitung</button></div>
                         </div>
-                        <div class="result-box d-none" id="ou-result"></div>
+                        <div class="result-box-custom" id="ou-result"></div>
                     </div>
 
                     <div id="calc-cs" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Correct Score</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Odds (Desimal)</label><input type="number" id="cs-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-4"><label class="form-label">Taruhan (Rp)</label><input type="number" id="cs-stake" class="form-control" min="1000"></div>
-                            <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="calcGeneric('cs-odds', 'cs-stake', 'cs-result')">Hitung</button></div>
+                        <h5 class="fw-bold mb-3">Kalkulator Correct Score</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="cs-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-5"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="cs-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcGeneric('cs-odds', 'cs-stake', 'cs-result')">Hitung</button></div>
                         </div>
-                        <div class="result-box d-none" id="cs-result"></div>
+                        <div class="result-box-custom" id="cs-result"></div>
                     </div>
 
                     <div id="calc-1x2" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator 1X2</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Odds (Desimal)</label><input type="number" id="1x2-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-4"><label class="form-label">Taruhan (Rp)</label><input type="number" id="1x2-stake" class="form-control" min="1000"></div>
-                            <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="calcGeneric('1x2-odds', '1x2-stake', '1x2-result')">Hitung</button></div>
+                        <h5 class="fw-bold mb-3">Kalkulator 1X2</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="1x2-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-5"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="1x2-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcGeneric('1x2-odds', '1x2-stake', '1x2-result')">Hitung</button></div>
                         </div>
-                        <div class="result-box d-none" id="1x2-result"></div>
+                        <div class="result-box-custom" id="1x2-result"></div>
                     </div>
 
                     <div id="calc-dc" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Double Chance</h5>
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label">Odds (Desimal)</label><input type="number" id="dc-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-4"><label class="form-label">Taruhan (Rp)</label><input type="number" id="dc-stake" class="form-control" min="1000"></div>
-                            <div class="col-md-4 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="calcGeneric('dc-odds', 'dc-stake', 'dc-result')">Hitung</button></div>
+                        <h5 class="fw-bold mb-3">Kalkulator Double Chance</h5>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="dc-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-5"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="dc-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcGeneric('dc-odds', 'dc-stake', 'dc-result')">Hitung</button></div>
                         </div>
-                        <div class="result-box d-none" id="dc-result"></div>
+                        <div class="result-box-custom" id="dc-result"></div>
                     </div>
 
                     <!-- KALKULATOR ASIAN HANDICAP PECAHAN -->
                     <div id="calc-ah-pecahan" class="calc-section">
-                        <h5 class="border-bottom pb-2 mb-3">Kalkulator Asian Handicap Pecahan (0.25 / 0.75)</h5>
-                        <div class="row g-3">
+                        <h5 class="fw-bold mb-3">Kalkulator Asian Handicap Pecahan</h5>
+                        <div class="row g-3 align-items-end">
                             <div class="col-md-3">
-                                <label class="form-label">Jenis Voor</label>
-                                <select id="ah-voor" class="form-select">
+                                <label class="form-label-custom">Jenis Voor</label>
+                                <select id="ah-voor" class="form-control form-control-custom">
                                     <option value="0.25">0.25 (1/4)</option>
                                     <option value="0.75">0.75 (3/4)</option>
                                 </select>
                             </div>
-                            <div class="col-md-3"><label class="form-label">Odds (Desimal)</label><input type="number" id="ah-odds" step="0.01" class="form-control" min="1.01"></div>
-                            <div class="col-md-3"><label class="form-label">Taruhan (Rp)</label><input type="number" id="ah-stake" class="form-control" min="1000"></div>
                             <div class="col-md-3">
-                                <label class="form-label">Hasil Akhir</label>
-                                <select id="ah-result-status" class="form-select">
+                                <label class="form-label-custom">Hasil Taruhan</label>
+                                <select id="ah-result-status" class="form-control form-control-custom">
                                     <option value="menang-penuh">Menang Penuh</option>
                                     <option value="menang-setengah">Menang Setengah</option>
                                     <option value="kalah-setengah">Kalah Setengah</option>
                                     <option value="kalah-penuh">Kalah Penuh</option>
                                 </select>
                             </div>
+                            <div class="col-md-2"><label class="form-label-custom">Odds</label><input type="number" id="ah-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
+                            <div class="col-md-2"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="ah-stake" class="form-control form-control-custom" min="1000"></div>
+                            <div class="col-md-2"><button class="btn btn-primary-custom w-100" onclick="calcAsianHDP()">Hitung</button></div>
                         </div>
-                        <button class="btn btn-primary mt-3" onclick="calcAsianHDP()">Hitung Asian HDP</button>
-                        <div class="result-box d-none" id="ah-result"></div>
+                        <div class="result-box-custom" id="ah-result"></div>
                     </div>
 
                 </div>
@@ -255,14 +362,16 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- LOGIN LOGIC ---
+        // Format Mata Uang Rupiah Biar Cantik
+        const formatRupiah = (angka) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(angka);
+        };
+
+        // LOGIN
         function login() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
-            
             if(user === 'admin' && pass === '12345') {
                 document.getElementById('login-page').classList.add('d-none');
                 document.getElementById('dashboard').classList.remove('d-none');
@@ -271,78 +380,83 @@
             }
         }
 
-        // --- SIDEBAR PAGE NAVIGATION ---
+        // SIDEBAR PAGE NAV
         function showPage(pageId, element) {
-            // Sembunyikan semua halaman
             document.querySelectorAll('.page-section').forEach(el => el.classList.add('d-none'));
-            // Tampilkan halaman yang dipilih
             document.getElementById(pageId).classList.remove('d-none');
-
-            // Toggle active class di sidebar
             document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
         }
 
-        // --- KALKULATOR FILTER LOGIC ---
+        // KALKULATOR FILTER LOGIC
         function showCalculator() {
             const value = document.getElementById('calc-filter').value;
-            
-            // Sembunyikan semua kalkulator
             document.querySelectorAll('.calc-section').forEach(el => el.style.display = 'none');
-            // Sembunyikan semua result box juga
-            document.querySelectorAll('.result-box').forEach(el => el.classList.add('d-none'));
-
-            // Tampilkan kalkulator yang dipilih
-            if(value) {
-                document.getElementById(value).style.display = 'block';
-            }
+            document.querySelectorAll('.result-box-custom').forEach(el => el.style.display = 'none');
+            if(value) document.getElementById(value).style.display = 'block';
         }
 
-        // --- VALIDASI INPUT ---
+        // VALIDASI
         function validateInputs(oddsId, stakeId) {
             const odds = parseFloat(document.getElementById(oddsId).value);
             const stake = parseFloat(document.getElementById(stakeId).value);
-
-            if (isNaN(odds) || odds < 1.01) {
-                alert("Odds tidak boleh kosong atau kurang dari 1.01!");
-                return false;
-            }
-            if (isNaN(stake) || stake <= 0) {
-                alert("Nominal taruhan harus lebih dari 0!");
-                return false;
-            }
+            if (isNaN(odds) || odds < 1.01) { alert("Odds wajib diisi minimal 1.01!"); return false; }
+            if (isNaN(stake) || stake <= 0) { alert("Nominal taruhan harus lebih dari 0!"); return false; }
             return true;
         }
 
         function showResult(resultId, htmlContent) {
             const resBox = document.getElementById(resultId);
             resBox.innerHTML = htmlContent;
-            resBox.classList.remove('d-none');
+            resBox.style.display = 'block';
         }
 
-        // --- RUMUS DASAR (Odds Desimal) ---
+        // RUMUS SINGLE BET & GENERIC (HDP, O/U, CS, 1X2, DC)
+        // Rumus: Profit = (Odds - 1) * Stake | Payout = Profit + Stake
         function calcSingleBet() {
             if(!validateInputs('sb-odds', 'sb-stake')) return;
             const odds = parseFloat(document.getElementById('sb-odds').value);
             const stake = parseFloat(document.getElementById('sb-stake').value);
-            
             const profit = (odds - 1) * stake;
-            const totalPayout = profit + stake;
-            showResult('sb-result', `Keuntungan: <span class="text-success">Rp ${profit.toFixed(2)}</span> <br> Total Payout: <span class="text-primary fw-bold">Rp ${totalPayout.toFixed(2)}</span>`);
+            const totalPayout = stake + profit;
+            
+            showResult('sb-result', `
+                <div class="row text-center">
+                    <div class="col-6 border-end">
+                        <div class="result-label">Keuntungan Bersih</div>
+                        <div class="result-val profit">${formatRupiah(profit)}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="result-label">Total Payout</div>
+                        <div class="result-val">${formatRupiah(totalPayout)}</div>
+                    </div>
+                </div>
+            `);
         }
 
-        // Untuk Handicap, O/U, CS, 1X2, Double Chance (Rumusnya sama dengan Single)
         function calcGeneric(oddsId, stakeId, resultId) {
             if(!validateInputs(oddsId, stakeId)) return;
             const odds = parseFloat(document.getElementById(oddsId).value);
             const stake = parseFloat(document.getElementById(stakeId).value);
-            
             const profit = (odds - 1) * stake;
-            const totalPayout = profit + stake;
-            showResult(resultId, `Keuntungan: <span class="text-success">Rp ${profit.toFixed(2)}</span> <br> Total Payout: <span class="text-primary fw-bold">Rp ${totalPayout.toFixed(2)}</span>`);
+            const totalPayout = stake + profit;
+            
+            showResult(resultId, `
+                <div class="row text-center">
+                    <div class="col-6 border-end">
+                        <div class="result-label">Keuntungan Bersih</div>
+                        <div class="result-val profit">${formatRupiah(profit)}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="result-label">Total Payout</div>
+                        <div class="result-val">${formatRupiah(totalPayout)}</div>
+                    </div>
+                </div>
+            `);
         }
 
-        // --- RUMUS PARLAY ---
+        // RUMUS PARLAY
+        // Rumus: Odds Total = Odds1 * Odds2 * Odds3. Payout = Odds Total * Stake
         function calcParlay() {
             const o1 = parseFloat(document.getElementById('p-odds1').value) || 1;
             const o2 = parseFloat(document.getElementById('p-odds2').value) || 1;
@@ -350,16 +464,31 @@
             const stake = parseFloat(document.getElementById('p-stake').value);
             
             if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
-            if(o1 < 1.01 || o2 < 1.01 || o3 < 1.01) return alert("Semua odds harus diisi minimal 1.01!");
+            if(o1 < 1.01 || o2 < 1.01 || o3 < 1.01) return alert("Semua odds tim harus diisi minimal 1.01!");
 
             const parlayOdds = o1 * o2 * o3;
             const totalPayout = parlayOdds * stake;
             const profit = totalPayout - stake;
 
-            showResult('p-result', `Odds Parlay: <span class="text-warning">${parlayOdds.toFixed(2)}</span> <br> Keuntungan: <span class="text-success">Rp ${profit.toFixed(2)}</span> <br> Total Payout: <span class="text-primary fw-bold">Rp ${totalPayout.toFixed(2)}</span>`);
+            showResult('p-result', `
+                <div class="row text-center">
+                    <div class="col-4 border-end">
+                        <div class="result-label">Odds Parlay</div>
+                        <div class="result-val" style="color:#fbbf24;">${parlayOdds.toFixed(2)}</div>
+                    </div>
+                    <div class="col-4 border-end">
+                        <div class="result-label">Keuntungan</div>
+                        <div class="result-val profit">${formatRupiah(profit)}</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="result-label">Total Payout</div>
+                        <div class="result-val">${formatRupiah(totalPayout)}</div>
+                    </div>
+                </div>
+            `);
         }
 
-        // --- RUMUS MIX PARLAY ---
+        // RUMUS MIX PARLAY
         function calcMixParlay() {
             let o1 = parseFloat(document.getElementById('mp-odds1').value) || 1;
             let o2 = parseFloat(document.getElementById('mp-odds2').value) || 1;
@@ -368,7 +497,7 @@
             
             if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
 
-            // Jika Seri/Push, odds = 1.0
+            // Jika Seri/Push, odds jadi 1.0
             if(document.getElementById('mp-seri1').checked) o1 = 1;
             if(document.getElementById('mp-seri2').checked) o2 = 1;
             if(document.getElementById('mp-seri3').checked) o3 = 1;
@@ -377,10 +506,25 @@
             const totalPayout = parlayOdds * stake;
             const profit = totalPayout - stake;
 
-            showResult('mp-result', `Odds Mix Parlay: <span class="text-warning">${parlayOdds.toFixed(2)}</span> <br> Keuntungan: <span class="text-success">Rp ${profit.toFixed(2)}</span> <br> Total Payout: <span class="text-primary fw-bold">Rp ${totalPayout.toFixed(2)}</span>`);
+            showResult('mp-result', `
+                <div class="row text-center">
+                    <div class="col-4 border-end">
+                        <div class="result-label">Odds Mix Parlay</div>
+                        <div class="result-val" style="color:#fbbf24;">${parlayOdds.toFixed(2)}</div>
+                    </div>
+                    <div class="col-4 border-end">
+                        <div class="result-label">Keuntungan</div>
+                        <div class="result-val profit">${formatRupiah(profit)}</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="result-label">Total Payout</div>
+                        <div class="result-val">${formatRupiah(totalPayout)}</div>
+                    </div>
+                </div>
+            `);
         }
 
-        // --- RUMUS ASIAN HANDICAP PECAHAN ---
+        // RUMUS ASIAN HANDICAP PECAHAN
         function calcAsianHDP() {
             if(!validateInputs('ah-odds', 'ah-stake')) return;
             const voor = parseFloat(document.getElementById('ah-voor').value);
@@ -393,8 +537,8 @@
 
             if(voor === 0.25) {
                 if(status === 'menang-penuh') profit = (odds - 1) * stake;
-                else if(status === 'menang-setengah') profit = ((odds - 1) * halfStake); // setengah menang, setengah seri (uang kembali)
-                else if(status === 'kalah-setengah') profit = -halfStake; // setengah kalah, setengah seri
+                else if(status === 'menang-setengah') profit = ((odds - 1) * halfStake); // setengah menang, setengah uang kembali
+                else if(status === 'kalah-setengah') profit = -halfStake; // setengah kalah, setengah uang kembali
                 else if(status === 'kalah-penuh') profit = -stake;
             } 
             else if(voor === 0.75) {
@@ -405,12 +549,19 @@
             }
 
             let totalReturn = stake + profit;
-            let profitClass = profit >= 0 ? 'text-success' : 'text-danger';
+            let profitClass = profit >= 0 ? 'profit' : 'loss';
 
             showResult('ah-result', `
-                Hasil Perhitungan AH ${voor}: <br>
-                Keuntungan/Kerugian: <span class="${profitClass} fw-bold">Rp ${profit.toFixed(2)}</span> <br>
-                Total Uang Kembali: <span class="text-primary fw-bold">Rp ${totalReturn.toFixed(2)}</span>
+                <div class="row text-center">
+                    <div class="col-6 border-end">
+                        <div class="result-label">Status Kemenangan/Kerugian</div>
+                        <div class="result-val ${profitClass}">${profit >= 0 ? 'Profit' : 'Loss'}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="result-label">Total Nilai</div>
+                        <div class="result-val ${profitClass}">${formatRupiah(profit)}</div>
+                    </div>
+                </div>
             `);
         }
     </script>
