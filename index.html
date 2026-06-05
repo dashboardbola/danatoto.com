@@ -13,13 +13,17 @@
             --sidebar-bg: #1e293b;
             --primary-color: #3b82f6;
             --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            --bg-main: #f1f5f9;
+            
+            /* === VARIABEL BACKGROUND (NIANTI KALAU MAU GANTI WARNA/GAMBAR, UBAH SINI AJA) === */
+            --bg-outer: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%); /* Background luar (Halaman Login) */
+            --bg-inner: #f1f5f9; /* Background dalam (Halaman Dashboard) */
+            /* ====================================================================== */
         }
 
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-main); }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-inner); }
 
         /* LOGIN */
-        #login-page { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%); }
+        #login-page { background: var(--bg-outer); }
         .login-card { border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .form-control-login { border-radius: 10px; padding: 12px 16px; border: 2px solid #e2e8f0; background: #f8fafc; font-weight: 500; }
         .form-control-login:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
@@ -32,12 +36,7 @@
         .brand-logo { text-align: center; margin-bottom: 30px; padding: 0 20px; }
         .brand-logo a { text-decoration: none; display: inline-block; transition: 0.3s; }
         .brand-logo a:hover { transform: scale(1.05); opacity: 0.9; }
-        /* CSS TAMBAHAN UKURAN LOGO */
-        .sidebar-logo {
-            max-width: 180px; /* Lebar maksimal logo, bisa kamu ubah sesuai kebutuhan */
-            height: auto; 
-            border-radius: 8px;
-        }
+        .sidebar-logo { max-width: 180px; height: auto; border-radius: 8px; }
 
         .sidebar .nav-link { color: #94a3b8; padding: 14px 25px; margin: 4px 12px; border-radius: 12px; transition: 0.3s; font-weight: 500; }
         .sidebar .nav-link:hover { background: #334155; color: white; }
@@ -122,11 +121,9 @@
     <!-- DASHBOARD -->
     <div id="dashboard" class="d-none">
         <div class="sidebar">
-            <!-- BAGIAN LOGO YANG DIUBAH JADI GAMBAR LINK -->
             <div class="brand-logo">
                 <a href="https://link-situs-kamu.com" target="_blank">
-                    <!-- GANTI LINK GAMBAR INI DENGAN LOGO SITUS KAMU -->
-                    <img src="https://lh3.googleusercontent.com/d/1ZPhf6halBD7YIfLMiMgURFhSJ52C-VrI" alt="Gift Hub Logo" class="sidebar-logo">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvIj6B6KpU2d2M0WnS0v6y0Ocq2OlOoJfC6NL7T4vB8UO9p5h8u4cGHj5YqK5Yw3Qw2E0I1WqMv9Pb5eL0lq0v5Y0o5L/s1600/logo-gift-hub.png" alt="Gift Hub Logo" class="sidebar-logo">
                 </a>
             </div>
 
@@ -347,12 +344,25 @@
         // Format Rupiah
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        // BIAR PAS REFRESH BALIK KE LOGIN & INPUT KOSONG
+        // BIAR PAS REFRESH TETAP DI DASHBOARD JIKA SUDAH LOGIN
         window.onload = function() {
-            document.getElementById('login-page').classList.remove('d-none');
-            document.getElementById('dashboard').classList.add('d-none');
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+            const savedRole = sessionStorage.getItem('userRole');
+
+            if (isLoggedIn === 'true' && savedRole) {
+                // Langsung masuk dashboard tanpa login ulang
+                currentUserRole = savedRole;
+                document.getElementById('login-page').classList.add('d-none');
+                document.getElementById('dashboard').classList.remove('d-none');
+                document.getElementById('menu-add-user').style.display = (currentUserRole === 'admin') ? 'block' : 'none';
+                renderUserList();
+            } else {
+                // Kembali ke halaman login
+                document.getElementById('login-page').classList.remove('d-none');
+                document.getElementById('dashboard').classList.add('d-none');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            }
         };
 
         // --- LOGIN & IP DETECTION ---
@@ -375,7 +385,11 @@
                         return;
                     }
 
+                    // Simpan sesi agar F5 tidak logout
                     currentUserRole = foundUser.role;
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('userRole', currentUserRole);
+
                     document.getElementById('login-page').classList.add('d-none');
                     document.getElementById('dashboard').classList.remove('d-none');
                     document.getElementById('menu-add-user').style.display = (currentUserRole === 'admin') ? 'block' : 'none';
@@ -391,7 +405,11 @@
         }
 
         function logout() {
+            // Hapus sesi agar kembali ke login
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('userRole');
             currentUserRole = '';
+            
             document.getElementById('dashboard').classList.add('d-none');
             document.getElementById('login-page').classList.remove('d-none');
             document.getElementById('username').value = '';
@@ -454,7 +472,7 @@
             resBox.style.display = 'block';
         }
 
-        // --- RUMUS PERHITUNGAN TARUHAN ---
+        // --- RUMUS PERHITUNGAN TARUHAN (TIDAK DIRUBAH SEDIKIT PUN) ---
 
         function calcSingleBet() {
             if(!validateInputs('sb-odds', 'sb-stake')) return;
