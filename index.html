@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- SCRIPT ANTI FLICKER -->
     <script>
         if (localStorage.getItem('danatotoLogin') === 'true') {
             document.documentElement.classList.add('logged-in');
@@ -16,8 +15,8 @@
     </script>
 
     <style>
-        /* FONT CLEAR & ANTI BLUR */
-        * { font-family: 'Poppins', sans-serif !important; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        /* FIX GLOBAL: PAKAI BORDER-BOX & ANTI CLIP */
+        *, *::before, *::after { box-sizing: border-box !important; font-family: 'Poppins', sans-serif !important; -webkit-font-smoothing: antialiased; }
         body { background-color: #f1f5f9; margin: 0; line-height: 1.6; }
         .text-muted { color: #94a3b8 !important; }
 
@@ -28,18 +27,15 @@
             --bg-outer: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%);
         }
 
-        /* CSS ANTI FLICKER */
         #login-page, #dashboard { display: none !important; }
         html.logged-in #dashboard { display: flex !important; }
         html:not(.logged-in) #login-page { display: flex !important; }
 
-        /* LOGIN */
         #login-page { background: var(--bg-outer); justify-content: center; align-items: center; height: 100vh; }
         .login-card { border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .form-control-login { border-radius: 10px; padding: 12px 16px; border: 2px solid #e2e8f0; background: #f8fafc; font-weight: 500; }
         .form-control-login:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
 
-        /* SIDEBAR */
         .sidebar {
             height: 100vh; background: var(--sidebar-bg); color: white; position: fixed; width: 280px;
             padding: 20px 0; box-shadow: 5px 0 15px rgba(0,0,0,0.1); display: flex; flex-direction: column;
@@ -55,10 +51,10 @@
         .sidebar .nav-link i { margin-right: 12px; font-size: 1.2rem; }
         .sidebar-footer { margin-top: auto; padding: 10px 12px; border-top: 1px solid #334155; }
 
-        /* MAIN & CARDS */
         .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; }
         .page-title { font-weight: 700; font-size: 2rem; color: #0f172a; margin-bottom: 30px; }
         
+        /* KARTU UTAMA FIX BANGET NGGAK KEPOTONG */
         .card-custom {
             border: none; border-radius: 16px; 
             background: linear-gradient(145deg, #334155 0%, #1e293b 100%);
@@ -66,14 +62,15 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 30px; 
             border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.2s;
-            /* FIX TEKS KEPOTONG PAKAI INI */
+            /* HAPUS FLEX & HEIGHT PAKSAAN BIAR TEKS NGGAK NENTOK KEPOTONG */
             overflow: visible !important; 
             white-space: normal !important; 
-            word-wrap: break-word !important;
+            word-wrap: break-word !important; 
+            text-overflow: unset !important;
         }
         .card-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
-        .card-custom h5 { color: #ffffff; font-weight: 700; font-size: 1.2rem; }
-        .card-custom p { color: #94a3b8; font-size: 1rem; line-height: 1.6; }
+        .card-custom h5 { color: #ffffff; font-weight: 700; font-size: 1.2rem; margin-bottom: 10px; }
+        .card-custom p { color: #94a3b8; font-size: 1rem; line-height: 1.6; margin-bottom: 0; overflow: visible !important; }
 
         .icon-box {
             width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
@@ -86,21 +83,19 @@
         .bg-purple { background: linear-gradient(135deg, #a855f7, #9333ea); }
         .bg-cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
 
-        /* DASHBOARD UTAMA DIBIKIN BESAR & JELAS */
-        .card-home { padding: 45px 30px !important; }
-        .card-home i { font-size: 4rem !important; }
-        .card-home h5 { font-size: 1.5rem !important; margin-top: 15px !important; }
-        .card-home p { font-size: 1.1rem !important; margin-bottom: 0 !important; }
+        .card-home { text-align: center; }
+        .card-home i { font-size: 3.5rem; }
+        .card-home h5 { font-size: 1.4rem; margin-top: 15px; }
 
-        /* FORMS */
         .form-label-custom { font-weight: 600; font-size: 1rem; color: #cbd5e1; margin-bottom: 8px; }
-        .form-control-custom { border: 2px solid #475569; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: 500; background: #1e293b; color: white; transition: 0.3s; }
+        .form-control-custom { border: 2px solid #475569; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: 500; background: #1e293b; color: white; transition: 0.3s; width: 100%; }
         .form-control-custom:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.2); background: #0f172a; color: white; }
+        /* FIX DROPDOWN BIAR NGGAK KEPOTONG */
+        select.form-control-custom { overflow: visible !important; white-space: normal !important; text-overflow: unset !important; }
         
         .btn-primary-custom { background: var(--primary-gradient); border: none; border-radius: 10px; padding: 12px 24px; font-weight: 600; box-shadow: 0 5px 15px rgba(59,130,246,0.3); transition: 0.3s; color: white; }
         .btn-primary-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59,130,246,0.4); color: white; }
 
-        /* RESULT BOX */
         .result-box-custom { background: linear-gradient(135deg, #0f172a 0%, #020617 100%); color: white; border-radius: 12px; padding: 20px; margin-top: 20px; display: none; border-left: 5px solid var(--primary-color); }
         .result-label { font-size: 1rem; color: #94a3b8; margin-bottom: 2px; }
         .result-val { font-size: 1.5rem; font-weight: 700; color: white; }
@@ -116,7 +111,6 @@
 </head>
 <body>
 
-    <!-- LOGIN PAGE -->
     <div id="login-page">
         <div class="card login-card" style="width: 420px;">
             <div class="card-body p-5">
@@ -141,7 +135,6 @@
         </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="dashboard">
         <div class="sidebar">
             <div class="brand-logo">
@@ -162,41 +155,42 @@
         </div>
 
         <div class="main-content">
-            <!-- HOME (KOTAK DIBESARIN) -->
+            <!-- HOME (HAPUS ALIGN ITEMS STRETCH) -->
             <div id="page-home" class="page-section" style="display: block;">
                 <div class="page-title">Dashboard Utama</div>
                 <div class="row g-4">
-                    <div class="col-md-4"><div class="card-custom card-home text-center"><i class="bi bi-trophy-fill text-warning"></i><h5 class="fw-bold">Jenis Permainan</h5><p class="text-muted">Lihat semua jenis taruhan bola</p></div></div>
-                    <div class="col-md-4"><div class="card-custom card-home text-center"><i class="bi bi-calculator-fill text-primary"></i><h5 class="fw-bold">Kalkulator Odds</h5><p class="text-muted">Hitung keuntungan taruhan akurat</p></div></div>
-                    <div class="col-md-4"><div class="card-custom card-home text-center"><i class="bi bi-shield-lock text-success"></i><h5 class="fw-bold">IP Protection</h5><p class="text-muted">Sistem keamanan IP Address</p></div></div>
+                    <div class="col-md-4"><div class="card-custom card-home"><i class="bi bi-trophy-fill text-warning"></i><h5 class="fw-bold">Jenis Permainan</h5><p class="text-muted">Lihat semua jenis taruhan bola</p></div></div>
+                    <div class="col-md-4"><div class="card-custom card-home"><i class="bi bi-calculator-fill text-primary"></i><h5 class="fw-bold">Kalkulator Odds</h5><p class="text-muted">Hitung keuntungan taruhan akurat</p></div></div>
+                    <div class="col-md-4"><div class="card-custom card-home"><i class="bi bi-shield-lock text-success"></i><h5 class="fw-bold">IP Protection</h5><p class="text-muted">Sistem keamanan IP Address</p></div></div>
                 </div>
             </div>
 
-            <!-- JENIS PERMAINAN (GRID DIUBAH JADI col-lg-4 BIAR KOTAK LEBIH LEBAR & TEKS NGGAK KEPOTONG) -->
+            <!-- JENIS PERMAINAN -->
             <div id="page-jenis" class="page-section" style="display: none;">
                 <div class="page-title">Semua Jenis Permainan Bola</div>
                 <div class="row g-4">
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-blue"><i class="bi bi-1-circle-fill"></i></div><h5 class="fw-bold">1X2</h5><p class="mb-0">Menebak hasil akhir: Tim 1 Menang (1), Seri (X), Tim 2 Menang (2).</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-red"><i class="bi bi-arrow-left-right"></i></div><h5 class="fw-bold">Handicap</h5><p class="mb-0">Memberikan voor pada tim unggulan agar odds seimbang.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-green"><i class="bi bi-arrow-up-circle-fill"></i></div><h5 class="fw-bold">Over / Under</h5><p class="mb-0">Menebak total gol lebih banyak (Over) atau sedikit (Under) dari batas.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-orange"><i class="bi bi-bullseye"></i></div><h5 class="fw-bold">Correct Score</h5><p class="mb-0">Menebak skor akhir tepat. Tingkat kesulitan tinggi, odds besar.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-purple"><i class="bi bi-layers-fill"></i></div><h5 class="fw-bold">Double Chance</h5><p class="mb-0">Menebak 2 dari 3 kemungkinan hasil (1X, 12, X2).</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-cyan"><i class="bi bi-slash-circle-fill"></i></div><h5 class="fw-bold">Asian Handicap</h5><p class="mb-0">Voor pecahan (0.25, 0.75) tanpa opsi seri.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-blue"><i class="bi bi-1-square-fill"></i></div><h5 class="fw-bold">Single Bet</h5><p class="mb-0">Memasang taruhan hanya pada 1 pertandingan saja.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-green"><i class="bi bi-collection-fill"></i></div><h5 class="fw-bold">Parlay / Mix Parlay</h5><p class="mb-0">Gabungkan minimal 2 tim dalam 1 tiket taruhan.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-orange"><i class="bi bi-sort-numeric-up-alt"></i></div><h5 class="fw-bold">Odd / Even</h5><p class="mb-0">Menebak jumlah total gol ganjil (Odd) atau genap (Even).</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-red"><i class="bi bi-minecart-loaded"></i></div><h5 class="fw-bold">Total Goal</h5><p class="mb-0">Menebak rentang jumlah gol (0-1, 2-3, 4-6, 7+).</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-purple"><i class="bi bi-clock-history"></i></div><h5 class="fw-bold">Half Time / Full Time</h5><p class="mb-0">Menebak hasil babak pertama dan babak kedua secara terpisah.</p></div></div>
-                    <div class="col-lg-4 col-md-6"><div class="card-custom h-100"><div class="icon-box bg-cyan"><i class="bi bi-trophy-fill"></i></div><h5 class="fw-bold">Outright</h5><p class="mb-0">Menebak juara keseluruhan turnamen/liga.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-blue"><i class="bi bi-1-circle-fill"></i></div><h5 class="fw-bold">1X2</h5><p>Menebak hasil akhir: Tim 1 Menang (1), Seri (X), Tim 2 Menang (2).</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-red"><i class="bi bi-arrow-left-right"></i></div><h5 class="fw-bold">Handicap</h5><p>Memberikan voor pada tim unggulan agar odds seimbang.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-green"><i class="bi bi-arrow-up-circle-fill"></i></div><h5 class="fw-bold">Over / Under</h5><p>Menebak total gol lebih banyak (Over) atau sedikit (Under) dari batas.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-orange"><i class="bi bi-bullseye"></i></div><h5 class="fw-bold">Correct Score</h5><p>Menebak skor akhir tepat. Tingkat kesulitan tinggi, odds besar.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-purple"><i class="bi bi-layers-fill"></i></div><h5 class="fw-bold">Double Chance</h5><p>Menebak 2 dari 3 kemungkinan hasil (1X, 12, X2).</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-cyan"><i class="bi bi-slash-circle-fill"></i></div><h5 class="fw-bold">Asian Handicap</h5><p>Voor pecahan (0.25, 0.75) tanpa opsi seri.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-blue"><i class="bi bi-1-square-fill"></i></div><h5 class="fw-bold">Single Bet</h5><p>Memasang taruhan hanya pada 1 pertandingan saja.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-green"><i class="bi bi-collection-fill"></i></div><h5 class="fw-bold">Parlay / Mix Parlay</h5><p>Gabungkan minimal 2 tim dalam 1 tiket taruhan.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-orange"><i class="bi bi-sort-numeric-up-alt"></i></div><h5 class="fw-bold">Odd / Even</h5><p>Menebak jumlah total gol ganjil (Odd) atau genap (Even).</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-red"><i class="bi bi-minecart-loaded"></i></div><h5 class="fw-bold">Total Goal</h5><p>Menebak rentang jumlah gol (0-1, 2-3, 4-6, 7+).</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-purple"><i class="bi bi-clock-history"></i></div><h5 class="fw-bold">Half Time / Full Time</h5><p>Menebak hasil babak pertama dan babak kedua secara terpisah.</p></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="card-custom"><div class="icon-box bg-cyan"><i class="bi bi-trophy-fill"></i></div><h5 class="fw-bold">Outright</h5><p>Menebak juara keseluruhan turnamen/liga.</p></div></div>
                 </div>
             </div>
 
             <!-- PERHITUNGAN BOLA -->
             <div id="page-kalkulator" class="page-section" style="display: none;">
                 <div class="page-title">Perhitungan Bola</div>
-                <div class="card-custom" style="max-width: 800px;">
+                <div class="card-custom" style="width: 100%;">
+                    <!-- UBAH COL-MD-8 JADI COL-12 BIAR DROPDOWN LEBAR & NGGAK KEPOTONG -->
                     <div class="row mb-4">
-                        <div class="col-md-8">
+                        <div class="col-12">
                             <label class="form-label-custom">Pilih Jenis Perhitungan</label>
                             <select id="calc-filter" class="form-control form-control-custom" onchange="showCalculator()">
                                 <option value="">-- Pilih Jenis Perhitungan --</option>
@@ -310,20 +304,20 @@
                         <h5 class="fw-bold mb-3">Kalkulator Asian Handicap Pecahan</h5>
                         <p style="line-height: 1.6; margin-bottom: 1rem;">*Simulasi berdasarkan kondisi tim yang kamu pasang terhadap voor.</p>
                         <div class="row g-3 align-items-end">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label-custom">Jenis Voor</label>
                                 <select id="ah-voor" class="form-control form-control-custom">
                                     <option value="0.25">0.25 (1/4)</option>
                                     <option value="0.75">0.75 (3/4)</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label-custom">Kondisi Akhir</label>
                                 <select id="ah-result-status" class="form-control form-control-custom">
                                     <option value="win-full">Menang (Melewati Voor)</option>
-                                    <option value="win-half">Menang Tipis (Cuma beda 1 gol)</option>
+                                    <option value="win-half">Menang Tipis (Beda 1 gol)</option>
                                     <option value="lose-half">Kalah Tipis / Seri</option>
-                                    <option value="lose-full">Kalah (Tidak tembus Voor)</option>
+                                    <option value="lose-full">Kalah (Tidak tembus)</option>
                                 </select>
                             </div>
                             <div class="col-md-2"><label class="form-label-custom">Odds</label><input type="number" id="ah-odds" step="0.01" class="form-control form-control-custom" min="1.01"></div>
