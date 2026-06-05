@@ -29,20 +29,28 @@
             height: 100vh; background: var(--sidebar-bg); color: white; position: fixed; width: 280px;
             padding: 20px 0; box-shadow: 5px 0 15px rgba(0,0,0,0.1); display: flex; flex-direction: column;
         }
-        .brand-logo { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 30px; color: white; text-shadow: 0 0 10px rgba(59,130,246,0.5); }
-        .brand-logo i { color: var(--primary-color); margin-right: 5px; }
+        .brand-logo { text-align: center; margin-bottom: 30px; padding: 0 20px; }
+        .brand-logo a { text-decoration: none; display: inline-block; transition: 0.3s; }
+        .brand-logo a:hover { transform: scale(1.05); opacity: 0.9; }
+        /* CSS TAMBAHAN UKURAN LOGO */
+        .sidebar-logo {
+            max-width: 180px; /* Lebar maksimal logo, bisa kamu ubah sesuai kebutuhan */
+            height: auto; 
+            border-radius: 8px;
+        }
+
         .sidebar .nav-link { color: #94a3b8; padding: 14px 25px; margin: 4px 12px; border-radius: 12px; transition: 0.3s; font-weight: 500; }
         .sidebar .nav-link:hover { background: #334155; color: white; }
         .sidebar .nav-link.active { background: var(--primary-gradient); color: white; box-shadow: 0 5px 15px rgba(59,130,246,0.3); }
         .sidebar .nav-link i { margin-right: 12px; font-size: 1.2rem; }
         .sidebar-footer { margin-top: auto; padding: 10px 12px; border-top: 1px solid #334155; }
 
-        /* MAIN & CARDS - SUDAH DIKASIH WARNA BUKAN PUTIH */
+        /* MAIN & CARDS */
         .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; }
         .page-title { font-weight: 700; font-size: 2rem; color: #0f172a; margin-bottom: 30px; }
         .card-custom {
             border: none; border-radius: 16px; 
-            background: linear-gradient(145deg, #334155 0%, #1e293b 100%); /* WARNA DARK BLUE/GELAP */
+            background: linear-gradient(145deg, #334155 0%, #1e293b 100%);
             color: #e2e8f0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 30px; 
             border: 1px solid rgba(255,255,255,0.05);
@@ -114,7 +122,14 @@
     <!-- DASHBOARD -->
     <div id="dashboard" class="d-none">
         <div class="sidebar">
-            <div class="brand-logo"><i class="bi bi-gift-fill"></i> GIFT HUB</div>
+            <!-- BAGIAN LOGO YANG DIUBAH JADI GAMBAR LINK -->
+            <div class="brand-logo">
+                <a href="https://link-situs-kamu.com" target="_blank">
+                    <!-- GANTI LINK GAMBAR INI DENGAN LOGO SITUS KAMU -->
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhvIj6B6KpU2d2M0WnS0v6y0Ocq2OlOoJfC6NL7T4vB8UO9p5h8u4cGHj5YqK5Yw3Qw2E0I1WqMv9Pb5eL0lq0v5Y0o5L/s1600/logo-gift-hub.png" alt="Gift Hub Logo" class="sidebar-logo">
+                </a>
+            </div>
+
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link active" href="#" onclick="showPage('page-home', this)"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('page-jenis', this)"><i class="bi bi-trophy-fill"></i> Jenis Permainan</a></li>
@@ -151,7 +166,6 @@
                     <div class="col-lg-3 col-md-4"><div class="card-custom h-100"><div class="icon-box bg-green"><i class="bi bi-collection-fill"></i></div><h5 class="fw-bold">Parlay / Mix Parlay</h5><p class="mb-0 small">Gabungkan minimal 2 tim dalam 1 tiket taruhan.</p></div></div>
                     <div class="col-lg-3 col-md-4"><div class="card-custom h-100"><div class="icon-box bg-orange"><i class="bi bi-sort-numeric-up-alt"></i></div><h5 class="fw-bold">Odd / Even</h5><p class="mb-0 small">Menebak jumlah total gol ganjil (Odd) atau genap (Even).</p></div></div>
                     <div class="col-lg-3 col-md-4"><div class="card-custom h-100"><div class="icon-box bg-red"><i class="bi bi-minecart-loaded"></i></div><h5 class="fw-bold">Total Goal</h5><p class="mb-0 small">Menebak rentang jumlah gol (0-1, 2-3, 4-6, 7+).</p></div></div>
-                    <!-- HT/FT TIDAK DISINGKAT -->
                     <div class="col-lg-3 col-md-4"><div class="card-custom h-100"><div class="icon-box bg-purple"><i class="bi bi-clock-history"></i></div><h5 class="fw-bold">Half Time / Full Time</h5><p class="mb-0 small">Menebak hasil babak pertama dan babak kedua secara terpisah.</p></div></div>
                     <div class="col-lg-3 col-md-4"><div class="card-custom h-100"><div class="icon-box bg-cyan"><i class="bi bi-trophy-fill"></i></div><h5 class="fw-bold">Outright</h5><p class="mb-0 small">Menebak juara keseluruhan turnamen/liga.</p></div></div>
                 </div>
@@ -272,7 +286,6 @@
                         <div class="result-box-custom" id="dc-result"></div>
                     </div>
 
-                    <!-- ASIAN HANDICAP PECAHAN -->
                     <div id="calc-ah-pecahan" class="calc-section">
                         <h5 class="fw-bold mb-3">Kalkulator Asian Handicap Pecahan</h5>
                         <p class="small mb-3">*Simulasi berdasarkan kondisi tim yang kamu pasang terhadap voor.</p>
