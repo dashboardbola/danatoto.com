@@ -1,1 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white">
 
+    <!-- Area Login -->
+    <div id="login-screen" class="flex items-center justify-center h-screen">
+        <div class="bg-slate-900 p-8 rounded-lg border border-amber-600">
+            <h2 class="mb-4 font-bold text-amber-500">LOGIN</h2>
+            <input type="password" id="pass" placeholder="Password" class="w-full p-2 bg-black border border-slate-700 mb-4">
+            <button onclick="login()" class="w-full bg-amber-600 p-2">MASUK</button>
+        </div>
+    </div>
+
+    <!-- Area Dashboard -->
+    <div id="dashboard" class="hidden flex">
+        <div class="w-64 bg-slate-900 h-screen p-6">
+            <h2 class="text-amber-500 font-bold mb-6">MENU</h2>
+            <button onclick="alert('Pilih Kalkulator di kanan')" class="w-full text-left p-2 hover:bg-slate-800">Perhitungan Bola</button>
+        </div>
+        <div class="p-10">
+            <h1 class="text-2xl font-bold mb-4">Pilih Kalkulator</h1>
+            <select id="kalk" onchange="pilih()" class="bg-slate-800 p-2 border border-amber-600">
+                <option value="">-- Pilih --</option>
+                <option value="Single Bet">Single Bet</option>
+                <option value="Mix Parlay">Mix Parlay</option>
+            </select>
+            <div id="calc-area" class="mt-4"></div>
+        </div>
+    </div>
+
+    <script>
+        function login() {
+            if(document.getElementById('pass').value === "123") {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+            } else { alert("Password Salah!"); }
+        }
+        function pilih() {
+            let jenis = document.getElementById('kalk').value;
+            document.getElementById('calc-area').innerHTML = `<h3>${jenis}</h3><input type="number" class="bg-black p-2 border border-slate-600" placeholder="Masukkan Odds">`;
+        }
+    </script>
+</body>
+</html>
