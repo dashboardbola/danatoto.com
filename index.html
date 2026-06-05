@@ -8,10 +8,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- SCRIPT ANTI FLICKER / KEDAP-KEDIP SAAT F5 -->
+    <script>
+        if (localStorage.getItem('danatotoLogin') === 'true') {
+            document.documentElement.classList.add('logged-in');
+        }
+    </script>
+
     <style>
-        /* PAKAI !IMPORTANT BIAR FONT PASTI GANTI & NGGAK DIPOTONG */
         * { font-family: 'Poppins', sans-serif !important; }
-        body { background-color: #f1f5f9; }
+        body { background-color: #f1f5f9; margin: 0; }
         .text-muted { color: #94a3b8 !important; }
 
         :root {
@@ -21,8 +27,13 @@
             --bg-outer: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%);
         }
 
+        /* CSS ANTI FLICKER */
+        #login-page, #dashboard { display: none !important; }
+        html.logged-in #dashboard { display: flex !important; }
+        html:not(.logged-in) #login-page { display: flex !important; }
+
         /* LOGIN */
-        #login-page { background: var(--bg-outer); }
+        #login-page { background: var(--bg-outer); justify-content: center; align-items: center; height: 100vh; }
         .login-card { border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         .form-control-login { border-radius: 10px; padding: 12px 16px; border: 2px solid #e2e8f0; background: #f8fafc; font-weight: 500; }
         .form-control-login:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
@@ -35,7 +46,7 @@
         .brand-logo { text-align: center; margin-bottom: 30px; padding: 0 20px; }
         .brand-logo a { text-decoration: none; display: inline-block; transition: 0.3s; }
         .brand-logo a:hover { transform: scale(1.05); opacity: 0.9; }
-        .sidebar-logo { max-width: 180px; height: auto; border-radius: 8px; }
+        .sidebar-logo { max-width: 180px; height: auto; }
 
         .sidebar .nav-link { color: #94a3b8; padding: 14px 25px; margin: 4px 12px; border-radius: 12px; transition: 0.3s; font-weight: 500; }
         .sidebar .nav-link:hover { background: #334155; color: white; }
@@ -53,7 +64,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1); padding: 25px; 
             border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.2s;
-            /* FIX TEKS DIPOTONG */
             overflow: hidden; word-wrap: break-word; white-space: normal !important;
         }
         .card-custom:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
@@ -88,7 +98,6 @@
 
         .calc-section { display: none; }
         
-        /* DASHBOARD UTAMA DIKECILKAN */
         .card-home { padding: 20px !important; }
         .card-home i { font-size: 2.5rem !important; }
         .card-home h5 { font-size: 1.1rem; margin-top: 10px !important; }
@@ -101,8 +110,8 @@
 </head>
 <body>
 
-    <!-- LOGIN PAGE (PAKAI STYLE DISPLAY INLINE) -->
-    <div id="login-page" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <!-- LOGIN PAGE -->
+    <div id="login-page">
         <div class="card login-card" style="width: 420px;">
             <div class="card-body p-5">
                 <h3 class="text-center mb-2 fw-bold text-dark">Welcome Back!</h3>
@@ -126,13 +135,13 @@
         </div>
     </div>
 
-    <!-- DASHBOARD (DEFAULT NONE) -->
-    <div id="dashboard" style="display: none;">
+    <!-- DASHBOARD -->
+    <div id="dashboard">
         <div class="sidebar">
             <div class="brand-logo">
                 <a href="https://link-danatoto-kamu.com" target="_blank">
-                    <!-- LOGO DANATOTO -->
-                    <img src="https://placehold.co/180x50/1e293b/3b82f6?text=DANATOTO&font=poppins" alt="Danatoto Logo" class="sidebar-logo">
+                    <!-- LOGO DANATOTO DARI LINK GOOGLE DRIVE -->
+                    <img src="https://lh3.googleusercontent.com/d/1ZPhf6halBD7YIfLMiMgURFhSJ52C-VrI" alt="Danatoto Logo" class="sidebar-logo">
                 </a>
             </div>
 
@@ -148,8 +157,8 @@
         </div>
 
         <div class="main-content">
-            <!-- HOME (DIKECILKAN) -->
-            <div id="page-home" class="page-section">
+            <!-- HOME -->
+            <div id="page-home" class="page-section" style="display: block;">
                 <div class="page-title">Dashboard Utama</div>
                 <div class="row g-4">
                     <div class="col-md-4"><div class="card-custom card-home text-center"><i class="bi bi-trophy-fill text-warning"></i><h5 class="fw-bold">Jenis Permainan</h5><p class="text-muted">Lihat semua jenis taruhan bola</p></div></div>
@@ -347,27 +356,22 @@
         let usersDB = [
             { username: 'admin', password: '12345', role: 'admin', allowedIP: 'any' }
         ];
-        let currentUserRole = '';
+        let currentUserRole = localStorage.getItem('danatotoRole') || '';
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        // FUNGSI PINDAH LAYAR PAKAI PURE JAVASCRIPT (TANPA CLASS BOOTSTRAP)
         function showDashboard() {
-            document.getElementById('login-page').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'flex';
+            document.documentElement.classList.add('logged-in');
             document.getElementById('menu-add-user').style.display = (currentUserRole === 'admin') ? 'block' : 'none';
             renderUserList();
         }
 
         function showLoginPage() {
-            document.getElementById('login-page').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'none';
+            document.documentElement.classList.remove('logged-in');
         }
 
-        // CEK SESI F5 PAKAI LOCAL STORAGE
         window.onload = function() {
             if (localStorage.getItem('danatotoLogin') === 'true') {
-                currentUserRole = localStorage.getItem('danatotoRole');
                 showDashboard();
             } else {
                 showLoginPage();
