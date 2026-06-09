@@ -216,16 +216,7 @@
                 </div>
             </div>
 
-           <script>
-
-             done proses pak
-https://sleekshot.app/v/C45Au9kYbyCR
-https://sleekshot.app/v/zJI4OotS4nfd
-https://sleekshot.app/v/cXsh7JmwFvnc
-https://sleekshot.app/v/P78Vj8Oln4yy
-
-
-   <!-- PERHITUNGAN BOLA -->
+            <!-- PERHITUNGAN BOLA -->
             <div id="page-kalkulator" class="page-section" style="display: none;">
                 <div class="page-title">Perhitungan Bola</div>
                 <div class="card-custom" style="width: 100%;">
@@ -515,25 +506,53 @@ https://sleekshot.app/v/P78Vj8Oln4yy
             resBox.style.display = 'block';
         }
 
-        // --- RUMUS PERHITUNGAN TIDAK DIRUSAK ---
+        // --- RUMUS PERHITUNGAN YANG SUDAH DIPERBAIKI & DIPERPRTIK ---
+        
+        // Fungsi bantu untuk membuat layout hasil yang rapi
+        function buildResultHTML(details, totalOdds, stake, profit, payout) {
+            let detailHTML = '';
+            details.forEach(d => {
+                detailHTML += `<div class="detail-row"><span class="detail-key">${d.key}</span><span class="detail-value">${d.value}</span></div>`;
+            });
+
+            return `
+                <div class="mb-2">${detailHTML}</div>
+                <div class="summary-box">
+                    <div class="row text-center">
+                        ${totalOdds !== null ? `
+                        <div class="col-md-3 border-end mb-2 mb-md-0">
+                            <div class="result-label">Total Odds</div>
+                            <div class="result-val" style="color:#fbbf24; font-size: 1.2rem;">${totalOdds}</div>
+                        </div>` : ''}
+                        <div class="${totalOdds !== null ? 'col-md-3' : 'col-md-4'} border-end mb-2 mb-md-0">
+                            <div class="result-label">Taruhan</div>
+                            <div class="result-val" style="color:#94a3b8; font-size: 1.2rem;">${formatRupiah(stake)}</div>
+                        </div>
+                        <div class="${totalOdds !== null ? 'col-md-3' : 'col-md-4'} border-end mb-2 mb-md-0">
+                            <div class="result-label">Profit</div>
+                            <div class="result-val profit" style="font-size: 1.2rem;">${formatRupiah(profit)}</div>
+                        </div>
+                        <div class="${totalOdds !== null ? 'col-md-3' : 'col-md-4'}">
+                            <div class="result-label">Bayaran</div>
+                            <div class="result-val" style="font-size: 1.2rem;">${formatRupiah(payout)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function calcSingleBet() {
             if(!validateInputs('sb-odds', 'sb-stake')) return;
             const odds = parseFloat(document.getElementById('sb-odds').value);
             const stake = parseFloat(document.getElementById('sb-stake').value);
             const profit = (odds - 1) * stake;
             const totalPayout = stake + profit;
-            showResult('sb-result', `
-                <div class="row text-center">
-                    <div class="col-md-6 border-end mb-2 mb-md-0">
-                        <div class="result-label">Untung Bersih (Profit Member)</div>
-                        <div class="result-val profit">${formatRupiah(profit)}</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="result-label">Total Dibayar (Modal + Profit)</div>
-                        <div class="result-val">${formatRupiah(totalPayout)}</div>
-                    </div>
-                </div>
-            `);
+            
+            const details = [
+                { key: 'Odds', value: odds.toFixed(2) }
+            ];
+
+            showResult('sb-result', buildResultHTML(details, null, stake, profit, totalPayout));
         }
 
         function calcGeneric(oddsId, stakeId, resultId) {
@@ -542,24 +561,18 @@ https://sleekshot.app/v/P78Vj8Oln4yy
             const stake = parseFloat(document.getElementById(stakeId).value);
             const profit = (odds - 1) * stake;
             const totalPayout = stake + profit;
-            showResult(resultId, `
-                <div class="row text-center">
-                    <div class="col-md-6 border-end mb-2 mb-md-0">
-                        <div class="result-label">Untung Bersih (Profit Member)</div>
-                        <div class="result-val profit">${formatRupiah(profit)}</div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="result-label">Total Dibayar (Modal + Profit)</div>
-                        <div class="result-val">${formatRupiah(totalPayout)}</div>
-                    </div>
-                </div>
-            `);
+            
+            const details = [
+                { key: 'Odds', value: odds.toFixed(2) }
+            ];
+
+            showResult(resultId, buildResultHTML(details, null, stake, profit, totalPayout));
         }
 
         function calcParlay() {
-            const o1 = parseFloat(document.getElementById('p-odds1').value) || 1;
-            const o2 = parseFloat(document.getElementById('p-odds2').value) || 1;
-            const o3 = parseFloat(document.getElementById('p-odds3').value) || 1;
+            const o1 = parseFloat(document.getElementById('p-odds1').value) || 0;
+            const o2 = parseFloat(document.getElementById('p-odds2').value) || 0;
+            const o3 = parseFloat(document.getElementById('p-odds3').value) || 0;
             const stake = parseFloat(document.getElementById('p-stake').value);
             
             if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
@@ -569,56 +582,43 @@ https://sleekshot.app/v/P78Vj8Oln4yy
             const totalPayout = parlayOdds * stake;
             const profit = totalPayout - stake;
 
-            showResult('p-result', `
-                <div class="row text-center">
-                    <div class="col-md-4 border-end mb-2 mb-md-0">
-                        <div class="result-label">Odds Parlay</div>
-                        <div class="result-val" style="color:#fbbf24;">${parlayOdds.toFixed(2)}</div>
-                    </div>
-                    <div class="col-md-4 border-end mb-2 mb-md-0">
-                        <div class="result-label">Untung Bersih</div>
-                        <div class="result-val profit">${formatRupiah(profit)}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="result-label">Total Dibayar</div>
-                        <div class="result-val">${formatRupiah(totalPayout)}</div>
-                    </div>
-                </div>
-            `);
+            const details = [
+                { key: 'Odds 1', value: o1.toFixed(2) },
+                { key: 'Odds 2', value: o2.toFixed(2) },
+                { key: 'Odds 3', value: o3.toFixed(2) }
+            ];
+
+            showResult('p-result', buildResultHTML(details, parlayOdds.toFixed(3), stake, profit, totalPayout));
         }
 
         function calcMixParlay() {
-            let o1 = parseFloat(document.getElementById('mp-odds1').value) || 1;
-            let o2 = parseFloat(document.getElementById('mp-odds2').value) || 1;
-            let o3 = parseFloat(document.getElementById('mp-odds3').value) || 1;
+            let o1 = parseFloat(document.getElementById('mp-odds1').value) || 0;
+            let o2 = parseFloat(document.getElementById('mp-odds2').value) || 0;
+            let o3 = parseFloat(document.getElementById('mp-odds3').value) || 0;
             const stake = parseFloat(document.getElementById('mp-stake').value);
             
             if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
+            if(o1 < 1.01 || o2 < 1.01 || o3 < 1.01) return alert("Semua odds tim harus diisi minimal 1.01!");
 
-            if(document.getElementById('mp-seri1').checked) o1 = 1;
-            if(document.getElementById('mp-seri2').checked) o2 = 1;
-            if(document.getElementById('mp-seri3').checked) o3 = 1;
+            let s1 = document.getElementById('mp-seri1').checked;
+            let s2 = document.getElementById('mp-seri2').checked;
+            let s3 = document.getElementById('mp-seri3').checked;
+
+            if(s1) o1 = 1;
+            if(s2) o2 = 1;
+            if(s3) o3 = 1;
 
             const parlayOdds = o1 * o2 * o3;
             const totalPayout = parlayOdds * stake;
             const profit = totalPayout - stake;
 
-            showResult('mp-result', `
-                <div class="row text-center">
-                    <div class="col-md-4 border-end mb-2 mb-md-0">
-                        <div class="result-label">Odds Mix Parlay</div>
-                        <div class="result-val" style="color:#fbbf24;">${parlayOdds.toFixed(2)}</div>
-                    </div>
-                    <div class="col-md-4 border-end mb-2 mb-md-0">
-                        <div class="result-label">Untung Bersih</div>
-                        <div class="result-val profit">${formatRupiah(profit)}</div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="result-label">Total Dibayar</div>
-                        <div class="result-val">${formatRupiah(totalPayout)}</div>
-                    </div>
-                </div>
-            `);
+            const details = [
+                { key: 'Odds 1', value: s1 ? '<span class="text-warning">Seri/Push (1.00)</span>' : o1.toFixed(2) },
+                { key: 'Odds 2', value: s2 ? '<span class="text-warning">Seri/Push (1.00)</span>' : o2.toFixed(2) },
+                { key: 'Odds 3', value: s3 ? '<span class="text-warning">Seri/Push (1.00)</span>' : o3.toFixed(2) }
+            ];
+
+            showResult('mp-result', buildResultHTML(details, parlayOdds.toFixed(3), stake, profit, totalPayout));
         }
 
         function calcAsianHDP() {
@@ -648,26 +648,13 @@ https://sleekshot.app/v/P78Vj8Oln4yy
             let profitClass = profit >= 0 ? 'profit' : 'loss';
             const totalPayout = stake + profit;
 
-            showResult('ah-result', `
-                <div class="row text-center">
-                    <div class="col-md-3 border-end mb-2 mb-md-0">
-                        <div class="result-label">Status</div>
-                        <div class="result-val ${profitClass}" style="font-size:1rem;">${statusText}</div>
-                    </div>
-                    <div class="col-md-3 border-end mb-2 mb-md-0">
-                        <div class="result-label">Untung / Rugi</div>
-                        <div class="result-val ${profitClass}">${formatRupiah(profit)}</div>
-                    </div>
-                    <div class="col-md-3 border-end mb-2 mb-md-0">
-                        <div class="result-label">Total Dibayar</div>
-                        <div class="result-val">${formatRupiah(totalPayout)}</div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="result-label">Modal Awal</div>
-                        <div class="result-val" style="color:#94a3b8;">${formatRupiah(stake)}</div>
-                    </div>
-                </div>
-            `);
+            const details = [
+                { key: 'Voor', value: voor === 0.25 ? '0.25 (1/4)' : '0.75 (3/4)' },
+                { key: 'Odds', value: odds.toFixed(2) },
+                { key: 'Status', value: `<span class="${profitClass}" style="font-weight:bold;">${statusText}</span>` }
+            ];
+
+            showResult('ah-result', buildResultHTML(details, null, stake, profit, totalPayout));
         }
     </script>
 </body>
