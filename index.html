@@ -216,8 +216,7 @@
                 </div>
             </div>
 
-         <!-- PERHITUNGAN BOLA -->
-            <div id="page-kalkulator" class="page-section" style="display: none;">
+         <div id="page-kalkulator" class="page-section" style="display: none;">
                 <div class="page-title">Perhitungan Bola</div>
                 <div class="card-custom" style="width: 100%;">
                     <div class="row mb-4">
@@ -362,7 +361,6 @@
                 </div>
             </div>
     
-            <!-- ADD USER -->
             <div id="page-add-user" class="page-section" style="display: none;">
                 <div class="page-title">Add User & IP Management</div>
                 <div class="card-custom" style="max-width: 800px;">
@@ -506,36 +504,37 @@
             resBox.style.display = 'block';
         }
 
-        // --- RUMUS PERHITUNGAN YANG SUDAH DIPERBAIKI & DIPERPRTIK ---
+        // --- CORE SCRIPT PERHITUNGAN BOLA TERBARU (FIXED & AKURAT) ---
         
-        // Fungsi bantu untuk membuat layout hasil yang rapi
         function buildResultHTML(details, totalOdds, stake, profit, payout) {
             let detailHTML = '';
             details.forEach(d => {
-                detailHTML += `<div class="detail-row"><span class="detail-key">${d.key}</span><span class="detail-value">${d.value}</span></div>`;
+                detailHTML += `<div style="display: flex; justify-content: space-between; font-family: monospace; margin-bottom: 5px; color: #94a3b8;">
+                    <span>${d.key}</span>
+                    <span style="font-weight: bold; color: #fff;">${d.value}</span>
+                </div>`;
             });
 
             return `
-                <div class="mb-2">${detailHTML}</div>
-                <div class="summary-box">
-                    <div class="row text-center">
-                        ${totalOdds !== null ? `
-                        <div class="col-md-3 border-end mb-2 mb-md-0">
-                            <div class="result-label">Total Odds</div>
-                            <div class="result-val" style="color:#fbbf24; font-size: 1.2rem;">${totalOdds}</div>
-                        </div>` : ''}
-                        <div class="${totalOdds !== null ? 'col-md-3' : 'col-md-4'} border-end mb-2 mb-md-0">
-                            <div class="result-label">Taruhan</div>
-                            <div class="result-val" style="color:#94a3b8; font-size: 1.2rem;">${formatRupiah(stake)}</div>
-                        </div>
-                        <div class="${totalOdds !== null ? 'col-md-3' : 'col-md-4'} border-end mb-2 mb-md-0">
-                            <div class="result-label">Profit</div>
-                            <div class="result-val profit" style="font-size: 1.2rem;">${formatRupiah(profit)}</div>
-                        </div>
-                        <div class="${totalOdds !== null ? 'col-md-3' : 'col-md-4'}">
-                            <div class="result-label">Bayaran</div>
-                            <div class="result-val" style="font-size: 1.2rem;">${formatRupiah(payout)}</div>
-                        </div>
+                <div style="border-bottom: 1px dashed #334155; padding-bottom: 10px; margin-bottom: 10px;">
+                    ${detailHTML}
+                </div>
+                <div style="font-family: monospace; line-height: 1.6;">
+                    <div style="display: flex; justify-content: space-between; color: #fbbf24;">
+                        <span>Total Odds:</span>
+                        <span style="font-weight: bold;">${totalOdds}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #94a3b8;">
+                        <span>Taruhan:</span>
+                        <span style="font-weight: bold;">${formatRupiah(stake)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #10b981; border-top: 1px solid #334155; margin-top: 5px; padding-top: 5px;">
+                        <span>Profit:</span>
+                        <span style="font-weight: bold;">${formatRupiah(profit)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; color: #38bdf8; font-size: 1.1rem; font-weight: bold;">
+                        <span>Bayaran:</span>
+                        <span>${formatRupiah(payout)}</span>
                     </div>
                 </div>
             `;
@@ -545,28 +544,24 @@
             if(!validateInputs('sb-odds', 'sb-stake')) return;
             const odds = parseFloat(document.getElementById('sb-odds').value);
             const stake = parseFloat(document.getElementById('sb-stake').value);
-            const profit = (odds - 1) * stake;
-            const totalPayout = stake + profit;
             
-            const details = [
-                { key: 'Odds', value: odds.toFixed(2) }
-            ];
-
-            showResult('sb-result', buildResultHTML(details, null, stake, profit, totalPayout));
+            const totalPayout = odds * stake;
+            const profit = totalPayout - stake;
+            
+            const details = [{ key: 'Odds 1 :', value: odds.toFixed(2) }];
+            showResult('sb-result', buildResultHTML(details, odds.toFixed(2), stake, profit, totalPayout));
         }
 
         function calcGeneric(oddsId, stakeId, resultId) {
             if(!validateInputs(oddsId, stakeId)) return;
             const odds = parseFloat(document.getElementById(oddsId).value);
             const stake = parseFloat(document.getElementById(stakeId).value);
-            const profit = (odds - 1) * stake;
-            const totalPayout = stake + profit;
             
-            const details = [
-                { key: 'Odds', value: odds.toFixed(2) }
-            ];
-
-            showResult(resultId, buildResultHTML(details, null, stake, profit, totalPayout));
+            const totalPayout = odds * stake;
+            const profit = totalPayout - stake;
+            
+            const details = [{ key: 'Odds 1 :', value: odds.toFixed(2) }];
+            showResult(resultId, buildResultHTML(details, odds.toFixed(2), stake, profit, totalPayout));
         }
 
         function calcParlay() {
@@ -583,9 +578,9 @@
             const profit = totalPayout - stake;
 
             const details = [
-                { key: 'Odds 1', value: o1.toFixed(2) },
-                { key: 'Odds 2', value: o2.toFixed(2) },
-                { key: 'Odds 3', value: o3.toFixed(2) }
+                { key: 'Odds 1 :', value: o1.toFixed(2) },
+                { key: 'Odds 2 :', value: o2.toFixed(2) },
+                { key: 'Odds 3 :', value: o3.toFixed(2) }
             ];
 
             showResult('p-result', buildResultHTML(details, parlayOdds.toFixed(3), stake, profit, totalPayout));
@@ -604,18 +599,18 @@
             let s2 = document.getElementById('mp-seri2').checked;
             let s3 = document.getElementById('mp-seri3').checked;
 
-            if(s1) o1 = 1;
-            if(s2) o2 = 1;
-            if(s3) o3 = 1;
+            let finalO1 = s1 ? 1.00 : o1;
+            let finalO2 = s2 ? 1.00 : o2;
+            let finalO3 = s3 ? 1.00 : o3;
 
-            const parlayOdds = o1 * o2 * o3;
+            const parlayOdds = finalO1 * finalO2 * finalO3;
             const totalPayout = parlayOdds * stake;
             const profit = totalPayout - stake;
 
             const details = [
-                { key: 'Odds 1', value: s1 ? '<span class="text-warning">Seri/Push (1.00)</span>' : o1.toFixed(2) },
-                { key: 'Odds 2', value: s2 ? '<span class="text-warning">Seri/Push (1.00)</span>' : o2.toFixed(2) },
-                { key: 'Odds 3', value: s3 ? '<span class="text-warning">Seri/Push (1.00)</span>' : o3.toFixed(2) }
+                { key: 'Odds 1 :', value: s1 ? 'Seri/Push (1.00)' : o1.toFixed(2) },
+                { key: 'Odds 2 :', value: s2 ? 'Seri/Push (1.00)' : o2.toFixed(2) },
+                { key: 'Odds 3 :', value: s3 ? 'Seri/Push (1.00)' : o3.toFixed(2) }
             ];
 
             showResult('mp-result', buildResultHTML(details, parlayOdds.toFixed(3), stake, profit, totalPayout));
@@ -628,33 +623,31 @@
             const stake = parseFloat(document.getElementById('ah-stake').value);
             const status = document.getElementById('ah-result-status').value;
 
-            let profit = 0;
-            let halfStake = stake / 2;
+            let finalOdds = 0;
             let statusText = "";
 
             if(voor === 0.25) {
-                if(status === 'win-full') { profit = (odds - 1) * stake; statusText = "Menang Penuh"; }
-                else if(status === 'win-half') { profit = (odds - 1) * stake; statusText = "Menang Penuh"; }
-                else if(status === 'lose-half') { profit = -halfStake; statusText = "Kalah Setengah (Seri)"; }
-                else if(status === 'lose-full') { profit = -stake; statusText = "Kalah Penuh"; }
+                if(status === 'win-full' || status === 'win-half') { finalOdds = odds; statusText = "Menang Penuh"; }
+                else if(status === 'lose-half') { finalOdds = 0.5; statusText = "Kalah Setengah"; }
+                else if(status === 'lose-full') { finalOdds = 0; statusText = "Kalah Penuh"; }
             } 
             else if(voor === 0.75) {
-                if(status === 'win-full') { profit = (odds - 1) * stake; statusText = "Menang Penuh (Bedanya 2+ gol)"; }
-                else if(status === 'win-half') { profit = ((odds - 1) / 2) * stake; statusText = "Menang Setengah (Bedanya 1 gol)"; }
-                else if(status === 'lose-half') { profit = -halfStake; statusText = "Kalah Setengah"; }
-                else if(status === 'lose-full') { profit = -stake; statusText = "Kalah Penuh"; }
+                if(status === 'win-full') { finalOdds = odds; statusText = "Menang Penuh"; }
+                else if(status === 'win-half') { finalOdds = 1 + ((odds - 1) / 2); statusText = "Menang Setengah"; }
+                else if(status === 'lose-half') { finalOdds = 0.5; statusText = "Kalah Setengah"; }
+                else if(status === 'lose-full') { finalOdds = 0; statusText = "Kalah Penuh"; }
             }
 
-            let profitClass = profit >= 0 ? 'profit' : 'loss';
-            const totalPayout = stake + profit;
+            const totalPayout = finalOdds * stake;
+            const profit = totalPayout - stake;
 
             const details = [
-                { key: 'Voor', value: voor === 0.25 ? '0.25 (1/4)' : '0.75 (3/4)' },
-                { key: 'Odds', value: odds.toFixed(2) },
-                { key: 'Status', value: `<span class="${profitClass}" style="font-weight:bold;">${statusText}</span>` }
+                { key: 'Voor :', value: voor === 0.25 ? '0.25 (1/4)' : '0.75 (3/4)' },
+                { key: 'Odds Awal :', value: odds.toFixed(2) },
+                { key: 'Status Akhir :', value: statusText }
             ];
 
-            showResult('ah-result', buildResultHTML(details, null, stake, profit, totalPayout));
+            showResult('ah-result', buildResultHTML(details, finalOdds.toFixed(3), stake, profit, totalPayout));
         }
     </script>
 </body>
