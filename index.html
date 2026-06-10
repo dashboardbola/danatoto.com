@@ -63,7 +63,52 @@
     overflow: visible;
     border-top: 6px solid var(--primary-color) !important;
 }
+/* --- MULAI TAMBAHKAN DI SINI (BARIS 66 DAN SETERUSNYA) --- */
 
+/* 1. Mengubah Dropdown Pilihan Jenis Perhitungan */
+select.form-control-custom,
+.form-select,
+#page-kalkulator select {
+    background-color: rgba(15, 23, 42, 0.7) !important; /* Gelap transparan */
+    color: #ffffff !important; /* Teks putih bersih */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Border tipis elegan */
+    border-radius: 8px !important;
+    padding: 10px 15px !important;
+}
+
+/* Memastikan daftar pilihan (opsi dropdown) saat diklik warnanya tetap gelap */
+select.form-control-custom option,
+.form-select option {
+    background-color: #130b2b !important; /* Ungu gelap senada background utama */
+    color: #ffffff !important;
+}
+
+/* 2. Mengubah Kotak Input Angka (Odds & Taruhan) */
+input[type="number"].form-control-custom,
+input[type="text"].form-control-custom,
+#page-kalkulator input {
+    background-color: rgba(15, 23, 42, 0.5) !important; /* Gelap transparan pas */
+    color: #ffffff !important; /* Angka yang diketik jadi putih terang */
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+}
+
+/* Mengubah warna teks label petunjuk di atas kotak ("Pilih Jenis Perhitungan", "Odds", "Taruhan") */
+#page-kalkulator label,
+.form-label,
+#page-kalkulator h4 {
+    color: #f1f5f9 !important; /* Putih terang menyala, anti tenggelam */
+    font-weight: 600 !important;
+}
+
+/* Efek menyala biru pas kotak input atau dropdown sedang diklik/diisi */
+select.form-control-custom:focus,
+input.form-control-custom:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
+    outline: none !important;
+}
 /* Mengembalikan kotak input kecil (username & password) ke warna cerah bawaan/semula */
 .form-control-login { 
     border-radius: 12px !important; 
