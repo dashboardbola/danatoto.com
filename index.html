@@ -8,11 +8,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script>
-        if (localStorage.getItem('danatotoLogin') === 'true') {
-            document.documentElement.classList.add('logged-in');
-        }
-    </script>
+   <script>
+    if (localStorage.getItem('danatotoLogin') === 'true') {
+        document.documentElement.classList.add('logged-in');
+        
+        // Pengecekan otomatis agar menu Add User tetap terkunci/tersembunyi untuk CS
+        setTimeout(() => {
+            const role = localStorage.getItem('userRole');
+            const menuAddUser = document.getElementById('menu-add-user');
+            if (menuAddUser) {
+                if (role === 'admin') {
+                    menuAddUser.style.display = 'block';
+                } else {
+                    menuAddUser.style.display = 'none';
+                }
+            }
+        }, 100);
+    }
+</script>
 
     <style>
         *, *::before, *::after { box-sizing: border-box !important; font-family: 'Poppins', sans-serif !important; -webkit-font-smoothing: antialiased; }
@@ -520,13 +533,21 @@
         }
 
         function logout() {
-            localStorage.removeItem('danatotoLogin');
-            localStorage.removeItem('danatotoRole');
-            currentUserRole = '';
-            showLoginPage();
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        }
+    // Hapus semua data login yang tersimpan di browser
+    localStorage.removeItem('danatotoLogin');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('loggedInUser');
+    
+    // Kembalikan tampilan ke halaman login depan
+    document.documentElement.classList.remove('logged-in');
+    
+    // Kosongkan form login kembali agar bersih
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+    
+    const errorDiv = document.getElementById('login-error');
+    if (errorDiv) errorDiv.style.display = 'none';
+}
 
         function addUser() {
             const u = document.getElementById('new-username').value;
@@ -766,6 +787,76 @@
 
             showResult('ah-result', buildResultHTML(details, finalOdds, stake, profit, totalPayout));
         }
+        // ... (kode JavaScript lama kamu) ...
+
+  // --- KODE BARU: FUNGSI LOGIN HALAMAN DEPAN CEK FIREBASE ---
+function login(event) {
+    event.preventDefault();
+    
+    const usernameInput = document.getElementById('username').value.trim();
+    const passwordInput = document.getElementById('password').value.trim();
+    const errorDiv = document.getElementById('login-error');
+    
+    if (errorDiv) errorDiv.style.display = 'none';
+
+    // 1. KUNCI AKUN ADMIN UTAMA (Biar kamu selalu bisa masuk cepat)
+    // Silakan ganti 'passwordadminmu' dengan password rahasia admin kamu sendiri
+    if (usernameInput === 'admin' && passwordInput === 'passwordadminmu') { 
+        localStorage.setItem('danatotoLogin', 'true');
+        localStorage.setItem('userRole', 'admin');
+        localStorage.setItem('loggedInUser', 'admin');
+        
+        document.documentElement.classList.add('logged-in');
+        
+        const menuAddUser = document.getElementById('menu-add-user');
+        if (menuAddUser) menuAddUser.style.display = 'block'; 
+        return;
+    }
+
+    // 2. CEK DATABASE FIREBASE CHATGANA JIKA YANG LOGIN ADALAH TEMAN / CS
+    firebase.database().ref('users/' + usernameInput).once('value')
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const userData = snapshot.val();
+            
+            // Cocokkan password-nya
+            if (userData.password === passwordInput) {
+                localStorage.setItem('danatotoLogin', 'true');
+                localStorage.setItem('userRole', userData.role || 'member');
+                localStorage.setItem('loggedInUser', userData.username);
+                
+                document.documentElement.classList.add('logged-in');
+                
+                // LANGSUNG SEMBUNYIKAN MENU ADD USER JIKA YANG LOGIN ADALAH TEMAN / CS
+                const menuAddUser = document.getElementById('menu-add-user');
+                if (menuAddUser) menuAddUser.style.display = 'none';
+                
+                alert("Login Berhasil! Selamat bekerja, " + userData.username);
+            } else {
+                if (errorDiv) {
+                    errorDiv.innerText = "Password salah, Bos!";
+                    errorDiv.style.display = 'block';
+                } else {
+                    alert("Password salah, Bos!");
+                }
+            }
+        } else {
+            if (errorDiv) {
+                errorDiv.innerText = "Username tidak terdaftar!";
+                errorDiv.style.display = 'block';
+            } else {
+                alert("Username tidak terdaftar!");
+            }
+        }
+    })
+    .catch((error) => {
+        console.error(error);
+        if (errorDiv) {
+            errorDiv.innerText = "Koneksi database Firebase bermasalah!";
+            errorDiv.style.display = 'block';
+        }
+    });
+}
     </script>
 </body>
 </html>
