@@ -65,49 +65,27 @@
 }
 /* --- MULAI TAMBAHKAN DI SINI (BARIS 66 DAN SETERUSNYA) --- */
 
-/* 1. Mengubah Dropdown Pilihan Jenis Perhitungan */
-select.form-control-custom,
-.form-select,
-#page-kalkulator select {
-    background-color: rgba(15, 23, 42, 0.7) !important; /* Gelap transparan */
-    color: #ffffff !important; /* Teks putih bersih */
-    border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Border tipis elegan */
-    border-radius: 8px !important;
-    padding: 10px 15px !important;
-}
+/* --- TRICK CSS KUAT: PAKSA SEMUA TEKS LOGIN JADI PUTIH TERANG --- */
 
-/* Memastikan daftar pilihan (opsi dropdown) saat diklik warnanya tetap gelap */
-select.form-control-custom option,
-.form-select option {
-    background-color: #130b2b !important; /* Ungu gelap senada background utama */
+/* 1. Memaksa tulisan "SILAHKAN LOGIN" jadi Putih */
+#login-page h3, 
+#login-page .text-dark,
+#login-page h3.text-dark {
     color: #ffffff !important;
 }
 
-/* 2. Mengubah Kotak Input Angka (Odds & Taruhan) */
-input[type="number"].form-control-custom,
-input[type="text"].form-control-custom,
-#page-kalkulator input {
-    background-color: rgba(15, 23, 42, 0.5) !important; /* Gelap transparan pas */
-    color: #ffffff !important; /* Angka yang diketik jadi putih terang */
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 8px !important;
-    padding: 10px 12px !important;
+/* 2. Memaksa tulisan label "Username" & "Password" jadi Putih Terang */
+#login-page label, 
+#login-page .form-label-custom,
+#login-page label.text-dark {
+    color: #ffffff !important;
+    opacity: 1 !important;
 }
 
-/* Mengubah warna teks label petunjuk di atas kotak ("Pilih Jenis Perhitungan", "Odds", "Taruhan") */
-#page-kalkulator label,
-.form-label,
-#page-kalkulator h4 {
-    color: #f1f5f9 !important; /* Putih terang menyala, anti tenggelam */
-    font-weight: 600 !important;
-}
-
-/* Efek menyala biru pas kotak input atau dropdown sedang diklik/diisi */
-select.form-control-custom:focus,
-input.form-control-custom:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4) !important;
-    outline: none !important;
+/* 3. Memaksa sub-judul "Masuk ke dashboard Danatoto" jadi Abu-abu Terang Bersih */
+#login-page p,
+#login-page .text-muted {
+    color: #e2e8f0 !important;
 }
 /* Mengembalikan kotak input kecil (username & password) ke warna cerah bawaan/semula */
 .form-control-login { 
