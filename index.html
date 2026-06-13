@@ -527,112 +527,109 @@
             resBox.style.display = 'block';
         }
 
-            <div id="page-kalkulator" class="page-section" style="display: none;">
-                <div class="page-title">Perhitungan Bola</div>
-                
-                <!-- DIBATASI MAX-WIDTH 500PX BIAR NGGAK KELEBARAN -->
-                <div class="card-custom" style="max-width: 500px; margin: 0 auto;">
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <label class="form-label-custom">Pilih Jenis Perhitungan</label>
-                            <select id="calc-filter" class="form-control form-control-custom" onchange="showCalculator()">
-                                <option value="">-- Pilih Jenis Perhitungan --</option>
-                                <option value="calc-single">1. Single Bet</option>
-                                <option value="calc-handicap">2. Handicap</option>
-                                <option value="calc-ou">3. Over / Under</option>
-                                <option value="calc-cs">4. Correct Score</option>
-                                <option value="calc-1x2">5. 1X2</option>
-                                <option value="calc-dc">6. Double Chance</option>
-                                <option value="calc-parlay">7. Parlay</option>
-                                <option value="calc-mix-parlay">8. Mix Parlay</option>
-                                <option value="calc-ah-pecahan">9. Asian Handicap Pecahan</option>
-                            </select>
-                        </div>
-                    </div>
+          <script>
+// Fungsi untuk memformat angka ke Rupiah
+function formatRupiah(number) {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+}
 
-                    <div id="calc-single" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Single Bet</h5>
-                        <div class="mb-3"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="sb-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="sb-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcSingleBet()">Hitung</button>
-                        <div id="sb-result" class="mt-3"></div>
-                    </div>
+// Fungsi Generic untuk Single Bet, Handicap, OU, CS, 1X2, DC
+function calcGeneric(oddsId, stakeId, resultId, label) {
+    let odds = parseFloat(document.getElementById(oddsId).value);
+    let stake = parseFloat(document.getElementById(stakeId).value);
+    
+    if (isNaN(odds) || isNaN(stake)) {
+        document.getElementById(resultId).innerHTML = "<span class='text-danger'>Masukkan nilai yang valid!</span>";
+        return;
+    }
 
-                    <div id="calc-handicap" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Handicap</h5>
-                        <div class="mb-3"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="hd-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="hd-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcGeneric('hd-odds','hd-stake','hd-result','Handicap')">Hitung</button>
-                        <div id="hd-result" class="mt-3"></div>
-                    </div>
+    let totalBayaran = odds < 0 ? stake + (stake / Math.abs(odds)) : stake * odds;
+    let profit = totalBayaran - stake;
 
-                    <div id="calc-ou" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Over / Under</h5>
-                        <div class="mb-3"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="ou-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="ou-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcGeneric('ou-odds','ou-stake','ou-result','Over/Under')">Hitung</button>
-                        <div id="ou-result" class="mt-3"></div>
-                    </div>
+    document.getElementById(resultId).innerHTML = `
+        <div class="alert alert-info">
+            <strong>${label}</strong><br>
+            Total Bayaran: ${formatRupiah(totalBayaran)}<br>
+            Net Profit: ${formatRupiah(profit)}
+        </div>`;
+}
 
-                    <div id="calc-cs" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Correct Score</h5>
-                        <div class="mb-3"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="cs-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="cs-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcGeneric('cs-odds','cs-stake','cs-result','Correct Score')">Hitung</button>
-                        <div id="cs-result" class="mt-3"></div>
-                    </div>
+// Fungsi Parlay (Sederhana 3 tim)
+function calcParlay() {
+    let o1 = parseFloat(document.getElementById('p-odds1').value) || 1;
+    let o2 = parseFloat(document.getElementById('p-odds2').value) || 1;
+    let o3 = parseFloat(document.getElementById('p-odds3').value) || 1;
+    let stake = parseFloat(document.getElementById('p-stake').value) || 0;
 
-                    <div id="calc-1x2" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator 1X2</h5>
-                        <div class="mb-3"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="x12-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="x12-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcGeneric('x12-odds','x12-stake','x12-result','1X2')">Hitung</button>
-                        <div id="x12-result" class="mt-3"></div>
-                    </div>
+    let totalOdds = o1 * o2 * o3;
+    let totalBayaran = stake * totalOdds;
+    let profit = totalBayaran - stake;
 
-                    <div id="calc-dc" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Double Chance</h5>
-                        <div class="mb-3"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="dc-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="dc-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcGeneric('dc-odds','dc-stake','dc-result','Double Chance')">Hitung</button>
-                        <div id="dc-result" class="mt-3"></div>
-                    </div>
+    document.getElementById('p-result').innerHTML = `
+        <div class="alert alert-success">
+            Total Odds: ${totalOdds.toFixed(2)}<br>
+            Total Bayaran: ${formatRupiah(totalBayaran)}<br>
+            Net Profit: ${formatRupiah(profit)}
+        </div>`;
+}
 
-                    <div id="calc-parlay" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Parlay</h5>
-                        <div class="mb-2"><label class="form-label-custom">Odds Tim 1</label><input type="number" id="p-odds1" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-2"><label class="form-label-custom">Odds Tim 2</label><input type="number" id="p-odds2" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-2"><label class="form-label-custom">Odds Tim 3</label><input type="number" id="p-odds3" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="p-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcParlay()">Hitung Parlay</button>
-                        <div id="p-result" class="mt-3"></div>
-                    </div>
+// Fungsi Mix Parlay (Lebih kompleks)
+function calcMixParlay() {
+    let stake = parseFloat(document.getElementById('mp-stake').value) || 0;
+    let items = [
+        {odds: parseFloat(document.getElementById('mp-odds1').value), status: document.getElementById('mp-status1').value},
+        {odds: parseFloat(document.getElementById('mp-odds2').value), status: document.getElementById('mp-status2').value},
+        {odds: parseFloat(document.getElementById('mp-odds3').value), status: document.getElementById('mp-status3').value}
+    ];
 
-                    <div id="calc-mix-parlay" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Mix Parlay</h5>
-                        <div class="mb-2"><label class="form-label-custom">Odds Tim 1</label><input type="number" id="mp-odds1" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-2"><select id="mp-status1" class="form-control form-control-custom"><option value="win">Menang Penuh</option><option value="win-half">Menang 1/2</option><option value="draw">Seri/Push</option><option value="lose-half">Kalah 1/2</option><option value="lose">Kalah Penuh</option></select></div>
-                        <div class="mb-2"><label class="form-label-custom">Odds Tim 2</label><input type="number" id="mp-odds2" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-2"><select id="mp-status2" class="form-control form-control-custom"><option value="win">Menang Penuh</option><option value="win-half">Menang 1/2</option><option value="draw">Seri/Push</option><option value="lose-half">Kalah 1/2</option><option value="lose">Kalah Penuh</option></select></div>
-                        <div class="mb-2"><label class="form-label-custom">Odds Tim 3</label><input type="number" id="mp-odds3" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-2"><select id="mp-status3" class="form-control form-control-custom"><option value="win">Menang Penuh</option><option value="win-half">Menang 1/2</option><option value="draw">Seri/Push</option><option value="lose-half">Kalah 1/2</option><option value="lose">Kalah Penuh</option></select></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="mp-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcMixParlay()">Hitung Mix Parlay</button>
-                        <div id="mp-result" class="mt-3"></div>
-                    </div>
+    let currentOdds = 1;
+    items.forEach(item => {
+        if (item.status === 'win') currentOdds *= item.odds;
+        else if (item.status === 'win-half') currentOdds *= ((item.odds - 1) / 2 + 1);
+        else if (item.status === 'lose-half') currentOdds *= 0.5;
+        else if (item.status === 'lose') currentOdds = 0;
+        // draw/push tidak mengubah odds
+    });
 
-                    <div id="calc-ah-pecahan" class="calc-section" style="display: none;">
-                        <h5 class="fw-bold mb-3">Kalkulator Asian Handicap</h5>
-                        <div class="mb-2"><label class="form-label-custom">Pasaran Voor</label><select id="ah-voor" class="form-control form-control-custom"><option value="0.25">0.25 (1/4)</option><option value="0.75">0.75 (3/4)</option></select></div>
-                        <div class="mb-2"><label class="form-label-custom">Odds (Desimal)</label><input type="number" id="ah-odds" step="0.01" class="form-control form-control-custom"></div>
-                        <div class="mb-2"><label class="form-label-custom">Kondisi Akhir</label><select id="ah-result-status" class="form-control form-control-custom"><option value="win-full">Menang Penuh</option><option value="win-half">Menang Setengah</option><option value="lose-half">Kalah Setengah</option><option value="lose-full">Kalah Penuh</option></select></div>
-                        <div class="mb-3"><label class="form-label-custom">Taruhan (Rp)</label><input type="number" id="ah-stake" class="form-control form-control-custom"></div>
-                        <button class="btn btn-primary-custom w-100" onclick="calcAsianHDP()">Hitung Asian HDP</button>
-                        <div id="ah-result" class="mt-3"></div>
-                    </div>
-                </div>
-            </div>
+    let totalBayaran = currentOdds > 0 ? stake * currentOdds : 0;
+    let profit = totalBayaran - stake;
 
+    document.getElementById('mp-result').innerHTML = `
+        <div class="alert alert-success">
+            Final Odds: ${currentOdds.toFixed(2)}<br>
+            Total Bayaran: ${formatRupiah(totalBayaran)}<br>
+            Net Profit: ${formatRupiah(profit)}
+        </div>`;
+}
+
+// Fungsi Asian Handicap
+function calcAsianHDP() {
+    let odds = parseFloat(document.getElementById('ah-odds').value);
+    let stake = parseFloat(document.getElementById('ah-stake').value);
+    let status = document.getElementById('ah-result-status').value;
+    
+    let multiplier = 0;
+    if (status === 'win-full') multiplier = odds;
+    else if (status === 'win-half') multiplier = (odds - 1) / 2 + 1;
+    else if (status === 'lose-half') multiplier = 0.5;
+    else if (status === 'lose-full') multiplier = 0;
+
+    let totalBayaran = stake * multiplier;
+    let profit = totalBayaran - stake;
+
+    document.getElementById('ah-result').innerHTML = `
+        <div class="alert alert-warning">
+            Total Bayaran: ${formatRupiah(totalBayaran)}<br>
+            Net Profit: ${formatRupiah(profit)}
+        </div>`;
+}
+
+// Fungsi untuk mengganti tampilan kalkulator
+function showCalculator() {
+    let val = document.getElementById('calc-filter').value;
+    document.querySelectorAll('.calc-section').forEach(el => el.style.display = 'none');
+    if(val) document.getElementById(val).style.display = 'block';
+}
   // --- KODE BARU: FUNGSI LOGIN HALAMAN DEPAN CEK FIREBASE ---
 function login(event) {
     event.preventDefault();
