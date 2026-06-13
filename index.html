@@ -527,7 +527,44 @@
             resBox.style.display = 'block';
         }
 
-               // --- RENDER BOX HASIL YANG JELAS & DETAIL ---
+              // --- AUTO FIX: BIAR NGGAK KELEBARAN & TOMBOL BISA DIKLIK ---
+        (function() {
+            // 1. Batasi Lebar Layar Agar Nggak Kelebaran
+            const styleFix = document.createElement('style');
+            styleFix.innerHTML = `
+                .content-wrapper, .kalkulator-box, [id^="menu-"], [id$="-result"] {
+                    max-width: 450px !important;
+                    width: 100% !important;
+                    margin-left: auto !important;
+                    margin-right: auto !important;
+                }
+                input, select {
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                    margin-bottom: 8px !important;
+                }
+            `;
+            document.head.appendChild(styleFix);
+
+            // 2. Pastikan Tombol Hitung Bisa Diklik (Sesuai ID Tombol)
+            document.addEventListener('DOMContentLoaded', function() {
+                const tombolSingle = document.getElementById('btn-sb-hitung');
+                if(tombolSingle) tombolSingle.onclick = calcSingleBet;
+
+                const tombolParlay = document.getElementById('btn-p-hitung');
+                if(tombolParlay) tombolParlay.onclick = calcParlay;
+
+                const tombolMixParlay = document.getElementById('btn-mp-hitung');
+                if(tombolMixParlay) tombolMixParlay.onclick = calcMixParlay;
+
+                const tombolAsianHDP = document.getElementById('btn-ah-hitung');
+                if(tombolAsianHDP) tombolAsianHDP.onclick = calcAsianHDP;
+            });
+        })();
+        // --- BATAS AUTO FIX ---
+
+
+        // --- RENDER BOX HASIL YANG JELAS & DETAIL ---
         function buildResultHTML(details, totalOdds, stake, profit, payout) {
             let detailHTML = '';
             details.forEach(d => {
@@ -565,7 +602,7 @@
             `;
         }
 
-        // 1. Single Bet (Tetap aman, tidak diubah)
+        // 1. Single Bet
         function calcSingleBet() {
             if(!validateInputs('sb-odds', 'sb-stake')) return;
             const odds = parseFloat(document.getElementById('sb-odds').value);
@@ -582,7 +619,7 @@
             showResult('sb-result', buildResultHTML(details, odds, stake, profit, totalPayout));
         }
 
-        // 2. Fungsi Generic (Tetap aman)
+        // 2. Fungsi Generic
         function calcGeneric(oddsId, stakeId, resultId, namaJenis) {
             if(!validateInputs(oddsId, stakeId)) return;
             const odds = parseFloat(document.getElementById(oddsId).value);
@@ -599,7 +636,7 @@
             showResult(resultId, buildResultHTML(details, odds, stake, profit, totalPayout));
         }
 
-        // 3. Parlay Biasa (Tetap aman)
+        // 3. Parlay Biasa
         function calcParlay() {
             const o1 = parseFloat(document.getElementById('p-odds1').value) || 0;
             const o2 = parseFloat(document.getElementById('p-odds2').value) || 0;
@@ -623,7 +660,7 @@
             showResult('p-result', buildResultHTML(details, parlayOdds, stake, profit, totalPayout));
         }
 
-        // 4. Mix Parlay (SUDAH DITAMBAHI PENJELASAN RUMUS UNTUK MEMBER)
+        // 4. Mix Parlay
         function calcMixParlay() {
             const stake = parseFloat(document.getElementById('mp-stake').value);
             if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
@@ -651,7 +688,6 @@
                     keterangan = `Menang Penuh (${odds.toFixed(2)})`;
                     rumusDetail = odds.toFixed(2);
                 } else if (status === 'win-half') {
-                    // Rumus Menang Setengah: 1 + ((Odds - 1) / 2)
                     pengaliOdds = 1 + ((odds - 1) / 2);
                     keterangan = `Menang 1/2 (Pengali: ${pengaliOdds.toFixed(2)})`;
                     rumusDetail = pengaliOdds.toFixed(2);
@@ -681,7 +717,6 @@
             if (!adaKalahPenuh) {
                 totalPayout = totalOdds * stake;
                 profit = totalPayout - stake;
-                // Penjelasan cara hitung ke member
                 details.push({ key: 'Cara Hitung Odds:', value: `${rumusArr.join(' x ')} = ${totalOdds.toFixed(3)}` });
                 details.push({ key: 'Cara Hitung Bayar:', value: `${totalOdds.toFixed(3)} x Modal` });
             } else {
@@ -695,7 +730,7 @@
             showResult('mp-result', buildResultHTML(details, totalOdds, stake, profit, totalPayout));
         }
 
-        // 5. Asian Handicap Quarter (SUDAH DITAMBAHI PENJELASAN RUMUS UNTUK MEMBER)
+        // 5. Asian Handicap Quarter
         function calcAsianHDP() {
             if(!validateInputs('ah-odds', 'ah-stake')) return;
             const voor = parseFloat(document.getElementById('ah-voor').value);
@@ -719,7 +754,6 @@
                     rumusText = `${odds.toFixed(2)} x Modal`;
                 }
                 else if(status === 'lose-half') { 
-                    // Voor 0.25 kalau draw, tim yang divoor kalah setengah. Modal dibagi 2.
                     finalOdds = 0.5; 
                     statusText = "Kalah Setengah (Modal Balik 50%)"; 
                     rumusText = `0.50 x Modal (Karena seri, taruhan dibagi 2)`;
@@ -737,7 +771,6 @@
                     rumusText = `${odds.toFixed(2)} x Modal`;
                 }
                 else if(status === 'win-half') { 
-                    // Rumus Menang Setengah voor 0.75: 1 + ((Odds - 1) / 2)
                     finalOdds = 1 + ((odds - 1) / 2); 
                     statusText = "Menang Setengah"; 
                     rumusText = `1 + ((${odds.toFixed(2)} - 1) / 2) x Modal`;
