@@ -527,278 +527,318 @@
             resBox.style.display = 'block';
         }
 
-              // --- AUTO FIX: BIAR NGGAK KELEBARAN & TOMBOL BISA DIKLIK ---
-        (function() {
-            // 1. Batasi Lebar Layar Agar Nggak Kelebaran
-            const styleFix = document.createElement('style');
-            styleFix.innerHTML = `
-                .content-wrapper, .kalkulator-box, [id^="menu-"], [id$="-result"] {
-                    max-width: 450px !important;
-                    width: 100% !important;
-                    margin-left: auto !important;
-                    margin-right: auto !important;
-                }
-                input, select {
-                    width: 100% !important;
-                    box-sizing: border-box !important;
-                    margin-bottom: 8px !important;
-                }
-            `;
-            document.head.appendChild(styleFix);
+        <!-- ================= BATAS AREA KALKULATOR (GANTI YANG LAMA) ================= -->
+<div style="max-width: 400px; margin: 0 auto; color: #e2e8f0; font-family: sans-serif;">
+    
+    <!-- DROPDOWN PILIHAN MENU -->
+    <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom:5px; font-weight:bold;">Pilih Jenis Perhitungan:</label>
+        <select id="pilih-kalkulator" onchange="gantiMenuKalkulator(this.value)" style="width: 100%; padding: 10px; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; font-size: 14px;">
+            <option value="menu-single">Single Bet</option>
+            <option value="menu-mixparlay">Mix Parlay</option>
+            <option value="menu-asian">Asian Handicap</option>
+        </select>
+    </div>
 
-            // 2. Pastikan Tombol Hitung Bisa Diklik (Sesuai ID Tombol)
-            document.addEventListener('DOMContentLoaded', function() {
-                const tombolSingle = document.getElementById('btn-sb-hitung');
-                if(tombolSingle) tombolSingle.onclick = calcSingleBet;
+    <!-- MENU 1: SINGLE BET -->
+    <div id="menu-single" class="menu-kalkulator" style="display: block; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+        <h3 style="margin-top:0; color:#fff; font-size:16px;">Kalkulator Single Bet</h3>
+        <label style="font-size:13px; color:#94a3b8;">Odds (Desimal)</label>
+        <input type="number" id="sb-odds" step="0.01" value="1.50" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        
+        <label style="font-size:13px; color:#94a3b8;">Taruhan (Rp)</label>
+        <input type="number" id="sb-stake" value="10000" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        
+        <button onclick="calcSingleBet()" style="width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">Hitung</button>
+        
+        <div id="sb-result" style="margin-top: 15px;"></div>
+    </div>
 
-                const tombolParlay = document.getElementById('btn-p-hitung');
-                if(tombolParlay) tombolParlay.onclick = calcParlay;
+    <!-- MENU 2: MIX PARLAY -->
+    <div id="menu-mixparlay" class="menu-kalkulator" style="display: none; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+        <h3 style="margin-top:0; color:#fff; font-size:16px;">Kalkulator Mix Parlay</h3>
+        
+        <label style="font-size:13px; color:#94a3b8;">Odds Tim 1</label>
+        <input type="number" id="mp-odds1" step="0.01" value="1.50" style="width: 100%; padding: 8px; margin-bottom: 5px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        <select id="mp-status1" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+            <option value="win">Menang Penuh</option><option value="win-half">Menang 1/2</option><option value="draw">Seri/Push</option><option value="lose-half">Kalah 1/2</option><option value="lose">Kalah Penuh</option>
+        </select>
 
-                const tombolMixParlay = document.getElementById('btn-mp-hitung');
-                if(tombolMixParlay) tombolMixParlay.onclick = calcMixParlay;
+        <label style="font-size:13px; color:#94a3b8;">Odds Tim 2</label>
+        <input type="number" id="mp-odds2" step="0.01" value="1.80" style="width: 100%; padding: 8px; margin-bottom: 5px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        <select id="mp-status2" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+            <option value="win">Menang Penuh</option><option value="win-half">Menang 1/2</option><option value="draw">Seri/Push</option><option value="lose-half">Kalah 1/2</option><option value="lose">Kalah Penuh</option>
+        </select>
 
-                const tombolAsianHDP = document.getElementById('btn-ah-hitung');
-                if(tombolAsianHDP) tombolAsianHDP.onclick = calcAsianHDP;
-            });
-        })();
-        // --- BATAS AUTO FIX ---
+        <label style="font-size:13px; color:#94a3b8;">Odds Tim 3</label>
+        <input type="number" id="mp-odds3" step="0.01" value="2.10" style="width: 100%; padding: 8px; margin-bottom: 5px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        <select id="mp-status3" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+            <option value="win">Menang Penuh</option><option value="win-half">Menang 1/2</option><option value="draw">Seri/Push</option><option value="lose-half">Kalah 1/2</option><option value="lose">Kalah Penuh</option>
+        </select>
+
+        <label style="font-size:13px; color:#94a3b8;">Taruhan (Rp)</label>
+        <input type="number" id="mp-stake" value="10000" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        
+        <button onclick="calcMixParlay()" style="width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">Hitung Mix Parlay</button>
+        
+        <div id="mp-result" style="margin-top: 15px;"></div>
+    </div>
+
+    <!-- MENU 3: ASIAN HANDICAP -->
+    <div id="menu-asian" class="menu-kalkulator" style="display: none; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid #334155;">
+        <h3 style="margin-top:0; color:#fff; font-size:16px;">Kalkulator Asian Handicap</h3>
+        
+        <label style="font-size:13px; color:#94a3b8;">Pasaran Voor</label>
+        <select id="ah-voor" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+            <option value="0.25">0.25 (1/4)</option>
+            <option value="0.75">0.75 (3/4)</option>
+        </select>
+
+        <label style="font-size:13px; color:#94a3b8;">Odds (Desimal)</label>
+        <input type="number" id="ah-odds" step="0.01" value="1.90" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+
+        <label style="font-size:13px; color:#94a3b8;">Kondisi Akhir</label>
+        <select id="ah-result-status" style="width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+            <option value="win-full">Menang Penuh</option>
+            <option value="win-half">Menang Setengah</option>
+            <option value="lose-half">Kalah Setengah</option>
+            <option value="lose-full">Kalah Penuh</option>
+        </select>
+
+        <label style="font-size:13px; color:#94a3b8;">Taruhan (Rp)</label>
+        <input type="number" id="ah-stake" value="10000" style="width: 100%; padding: 8px; margin-bottom: 15px; box-sizing: border-box; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px;">
+        
+        <button onclick="calcAsianHDP()" style="width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">Hitung Asian HDP</button>
+        
+        <div id="ah-result" style="margin-top: 15px;"></div>
+    </div>
+
+</div>
+<!-- ================= BATAS AKHIR AREA KALKULATOR ================= -->
 
 
-        // --- RENDER BOX HASIL YANG JELAS & DETAIL ---
-        function buildResultHTML(details, totalOdds, stake, profit, payout) {
-            let detailHTML = '';
-            details.forEach(d => {
-                detailHTML += `<div style="display: flex; justify-content: space-between; font-family: monospace; margin-bottom: 5px; color: #94a3b8;">
-                    <span>${d.key}</span>
-                    <span style="font-weight: bold; color: #fff; text-align:right; max-width: 60%;">${d.value}</span>
-                </div>`;
-            });
+<!-- ================= JAVASCRIPT (TARUH DI BAWAH / DI SCRIPT TAG) ================= -->
+<script>
+// --- FUNGSI BANTUAN (Kalau belum ada di scriptmu, wajib taruh ini) ---
+function formatRupiah(angka) {
+    if(isNaN(angka)) return "Rp 0";
+    return "Rp " + Math.round(angka).toLocaleString('id-ID');
+}
+function validateInputs(id1, id2) {
+    const v1 = parseFloat(document.getElementById(id1).value);
+    const v2 = parseFloat(document.getElementById(id2).value);
+    if(isNaN(v1) || v1 <= 0) { alert("Odds harus diisi dengan benar!"); return false; }
+    if(isNaN(v2) || v2 <= 0) { alert("Taruhan harus lebih dari 0!"); return false; }
+    return true;
+}
+function showResult(id, html) {
+    document.getElementById(id).innerHTML = html;
+}
 
-            const displayProfit = profit < 0 ? 0 : profit;
-            const displayPayout = payout < 0 ? 0 : payout;
+// --- FUNGSI GANTI MENU DROPDOWN ---
+function gantiMenuKalkulator(value) {
+    // Sembunyikan semua
+    const semuaMenu = document.querySelectorAll('.menu-kalkulator');
+    semuaMenu.forEach(menu => menu.style.display = 'none');
+    // Tampilkan yang dipilih
+    document.getElementById(value).style.display = 'block';
+}
 
-            return `
-                <div style="border-bottom: 1px dashed #334155; padding-bottom: 10px; margin-bottom: 10px;">
-                    ${detailHTML}
-                </div>
-                <div style="font-family: monospace; line-height: 1.6;">
-                    <div style="display: flex; justify-content: space-between; color: #fbbf24;">
-                        <span>Total Odds Akhir:</span>
-                        <span style="font-weight: bold;">${parseFloat(totalOdds).toFixed(3)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; color: #94a3b8;">
-                        <span>Modal Taruhan:</span>
-                        <span style="font-weight: bold;">${formatRupiah(stake)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; color: #10b981; border-top: 1px solid #334155; margin-top: 5px; padding-top: 5px;">
-                        <span>Profit (Keuntungan Bersih):</span>
-                        <span style="font-weight: bold;">${formatRupiah(displayProfit)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; color: #38bdf8; font-size: 1.1rem; font-weight: bold;">
-                        <span>Total Bayaran (Selesai):</span>
-                        <span>${formatRupiah(displayPayout)}</span>
-                    </div>
-                </div>
-            `;
+// --- RENDER BOX HASIL YANG JELAS & DETAIL ---
+function buildResultHTML(details, totalOdds, stake, profit, payout) {
+    let detailHTML = '';
+    details.forEach(d => {
+        detailHTML += `<div style="display: flex; justify-content: space-between; font-family: monospace; margin-bottom: 5px; color: #94a3b8;">
+            <span>${d.key}</span>
+            <span style="font-weight: bold; color: #fff; text-align:right; max-width: 60%;">${d.value}</span>
+        </div>`;
+    });
+
+    const displayProfit = profit < 0 ? 0 : profit;
+    const displayPayout = payout < 0 ? 0 : payout;
+
+    return `
+        <div style="border-bottom: 1px dashed #334155; padding-bottom: 10px; margin-bottom: 10px;">
+            ${detailHTML}
+        </div>
+        <div style="font-family: monospace; line-height: 1.6;">
+            <div style="display: flex; justify-content: space-between; color: #fbbf24;">
+                <span>Total Odds Akhir:</span>
+                <span style="font-weight: bold;">${parseFloat(totalOdds).toFixed(3)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #94a3b8;">
+                <span>Modal Taruhan:</span>
+                <span style="font-weight: bold;">${formatRupiah(stake)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #10b981; border-top: 1px solid #334155; margin-top: 5px; padding-top: 5px;">
+                <span>Profit (Keuntungan Bersih):</span>
+                <span style="font-weight: bold;">${formatRupiah(displayProfit)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #38bdf8; font-size: 1.1rem; font-weight: bold;">
+                <span>Total Bayaran (Selesai):</span>
+                <span>${formatRupiah(displayPayout)}</span>
+            </div>
+        </div>
+    `;
+}
+
+// 1. Single Bet
+function calcSingleBet() {
+    if(!validateInputs('sb-odds', 'sb-stake')) return;
+    const odds = parseFloat(document.getElementById('sb-odds').value);
+    const stake = parseFloat(document.getElementById('sb-stake').value);
+    
+    const totalPayout = odds * stake;
+    const profit = totalPayout - stake;
+    
+    const details = [
+        { key: 'Jenis Taruhan:', value: 'Single Bet' }, 
+        { key: 'Odds Terpasang:', value: odds.toFixed(2) },
+        { key: 'Rumus Bayar:', value: `${odds.toFixed(2)} x ${formatRupiah(stake)}` }
+    ];
+    showResult('sb-result', buildResultHTML(details, odds, stake, profit, totalPayout));
+}
+
+// 2. Mix Parlay
+function calcMixParlay() {
+    const stake = parseFloat(document.getElementById('mp-stake').value);
+    if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
+
+    let totalOdds = 1.00;
+    let details = [];
+    let adaKalahPenuh = false;
+    let rumusArr = [];
+
+    for (let i = 1; i <= 3; i++) {
+        let odds = parseFloat(document.getElementById(`mp-odds${i}`).value);
+        let status = document.getElementById(`mp-status${i}`).value;
+
+        if (isNaN(odds) || odds < 1.01) {
+            alert(`Odds untuk Tim ${i} belum diisi dengan benar!`);
+            return;
         }
 
-        // 1. Single Bet
-        function calcSingleBet() {
-            if(!validateInputs('sb-odds', 'sb-stake')) return;
-            const odds = parseFloat(document.getElementById('sb-odds').value);
-            const stake = parseFloat(document.getElementById('sb-stake').value);
-            
-            const totalPayout = odds * stake;
-            const profit = totalPayout - stake;
-            
-            const details = [
-                { key: 'Jenis Taruhan:', value: 'Single Bet' }, 
-                { key: 'Odds Terpasang:', value: odds.toFixed(2) },
-                { key: 'Rumus Bayar:', value: `${odds.toFixed(2)} x ${formatRupiah(stake)}` }
-            ];
-            showResult('sb-result', buildResultHTML(details, odds, stake, profit, totalPayout));
+        let pengaliOdds = 1.00;
+        let keterangan = "";
+        let rumusDetail = "";
+
+        if (status === 'win') {
+            pengaliOdds = odds;
+            keterangan = `Menang Penuh (${odds.toFixed(2)})`;
+            rumusDetail = odds.toFixed(2);
+        } else if (status === 'win-half') {
+            pengaliOdds = 1 + ((odds - 1) / 2);
+            keterangan = `Menang 1/2 (Pengali: ${pengaliOdds.toFixed(2)})`;
+            rumusDetail = pengaliOdds.toFixed(2);
+        } else if (status === 'draw') {
+            pengaliOdds = 1.00;
+            keterangan = "Seri/Push (Pengali: 1.00)";
+            rumusDetail = "1.00";
+        } else if (status === 'lose-half') {
+            pengaliOdds = 0.50;
+            keterangan = "Kalah 1/2 (Pengali: 0.50)";
+            rumusDetail = "0.50";
+        } else if (status === 'lose') {
+            pengaliOdds = 0.00;
+            keterangan = "Kalah Penuh (Pengali: 0.00)";
+            rumusDetail = "0.00";
+            adaKalahPenuh = true;
         }
 
-        // 2. Fungsi Generic
-        function calcGeneric(oddsId, stakeId, resultId, namaJenis) {
-            if(!validateInputs(oddsId, stakeId)) return;
-            const odds = parseFloat(document.getElementById(oddsId).value);
-            const stake = parseFloat(document.getElementById(stakeId).value);
-            
-            const totalPayout = odds * stake;
-            const profit = totalPayout - stake;
-            
-            const details = [
-                { key: 'Jenis Taruhan:', value: namaJenis }, 
-                { key: 'Odds Terpasang:', value: odds.toFixed(2) },
-                { key: 'Rumus Bayar:', value: `${odds.toFixed(2)} x ${formatRupiah(stake)}` }
-            ];
-            showResult(resultId, buildResultHTML(details, odds, stake, profit, totalPayout));
+        totalOdds *= pengaliOdds;
+        rumusArr.push(rumusDetail);
+        details.push({ key: `Tim ${i} [Odds ${odds.toFixed(2)}]:`, value: keterangan });
+    }
+
+    let totalPayout = 0;
+    let profit = 0;
+
+    if (!adaKalahPenuh) {
+        totalPayout = totalOdds * stake;
+        profit = totalPayout - stake;
+        details.push({ key: 'Cara Hitung Odds:', value: `${rumusArr.join(' x ')} = ${totalOdds.toFixed(3)}` });
+        details.push({ key: 'Cara Hitung Bayar:', value: `${totalOdds.toFixed(3)} x Modal` });
+    } else {
+        totalOdds = 0;
+        totalPayout = 0;
+        profit = -stake;
+        details.push({ key: 'STATUS PARLAY:', value: 'LOSE (Zonk)' });
+        details.push({ key: 'Penjelasan:', value: 'Ada 1 tim Kalah Penuh, maka taruhan rungkad.' });
+    }
+
+    showResult('mp-result', buildResultHTML(details, totalOdds, stake, profit, totalPayout));
+}
+
+// 3. Asian Handicap Quarter
+function calcAsianHDP() {
+    if(!validateInputs('ah-odds', 'ah-stake')) return;
+    const voor = parseFloat(document.getElementById('ah-voor').value);
+    const odds = parseFloat(document.getElementById('ah-odds').value);
+    const stake = parseFloat(document.getElementById('ah-stake').value);
+    const status = document.getElementById('ah-result-status').value;
+
+    let finalOdds = 0;
+    let statusText = "";
+    let rumusText = "";
+
+    if(voor === 0.25) {
+        if(status === 'win-full') { 
+            finalOdds = odds; 
+            statusText = "Menang Penuh"; 
+            rumusText = `${odds.toFixed(2)} x Modal`;
         }
-
-        // 3. Parlay Biasa
-        function calcParlay() {
-            const o1 = parseFloat(document.getElementById('p-odds1').value) || 0;
-            const o2 = parseFloat(document.getElementById('p-odds2').value) || 0;
-            const o3 = parseFloat(document.getElementById('p-odds3').value) || 0;
-            const stake = parseFloat(document.getElementById('p-stake').value);
-            
-            if(o1 < 1.01 || o2 < 1.01 || o3 < 1.01) return alert("Semua odds tim harus diisi minimal 1.01!");
-            if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
-
-            const parlayOdds = o1 * o2 * o3;
-            const totalPayout = parlayOdds * stake;
-            const profit = totalPayout - stake;
-
-            const details = [
-                { key: 'Parlay Tim 1 (Odds):', value: o1.toFixed(2) },
-                { key: 'Parlay Tim 2 (Odds):', value: o2.toFixed(2) },
-                { key: 'Parlay Tim 3 (Odds):', value: o3.toFixed(2) },
-                { key: 'Rumus Odds:', value: `${o1.toFixed(2)} x ${o2.toFixed(2)} x ${o3.toFixed(2)}` }
-            ];
-
-            showResult('p-result', buildResultHTML(details, parlayOdds, stake, profit, totalPayout));
+        else if(status === 'win-half') { 
+            finalOdds = odds; 
+            statusText = "Menang Penuh (Melewati Voor)"; 
+            rumusText = `${odds.toFixed(2)} x Modal`;
         }
-
-        // 4. Mix Parlay
-        function calcMixParlay() {
-            const stake = parseFloat(document.getElementById('mp-stake').value);
-            if(isNaN(stake) || stake <= 0) return alert("Nominal taruhan harus lebih dari 0!");
-
-            let totalOdds = 1.00;
-            let details = [];
-            let adaKalahPenuh = false;
-            let rumusArr = [];
-
-            for (let i = 1; i <= 3; i++) {
-                let odds = parseFloat(document.getElementById(`mp-odds${i}`).value);
-                let status = document.getElementById(`mp-status${i}`).value;
-
-                if (isNaN(odds) || odds < 1.01) {
-                    alert(`Odds untuk Tim ${i} belum diisi dengan benar!`);
-                    return;
-                }
-
-                let pengaliOdds = 1.00;
-                let keterangan = "";
-                let rumusDetail = "";
-
-                if (status === 'win') {
-                    pengaliOdds = odds;
-                    keterangan = `Menang Penuh (${odds.toFixed(2)})`;
-                    rumusDetail = odds.toFixed(2);
-                } else if (status === 'win-half') {
-                    pengaliOdds = 1 + ((odds - 1) / 2);
-                    keterangan = `Menang 1/2 (Pengali: ${pengaliOdds.toFixed(2)})`;
-                    rumusDetail = pengaliOdds.toFixed(2);
-                } else if (status === 'draw') {
-                    pengaliOdds = 1.00;
-                    keterangan = "Seri/Push (Pengali: 1.00)";
-                    rumusDetail = "1.00";
-                } else if (status === 'lose-half') {
-                    pengaliOdds = 0.50;
-                    keterangan = "Kalah 1/2 (Pengali: 0.50)";
-                    rumusDetail = "0.50";
-                } else if (status === 'lose') {
-                    pengaliOdds = 0.00;
-                    keterangan = "Kalah Penuh (Pengali: 0.00)";
-                    rumusDetail = "0.00";
-                    adaKalahPenuh = true;
-                }
-
-                totalOdds *= pengaliOdds;
-                rumusArr.push(rumusDetail);
-                details.push({ key: `Tim ${i} [Odds ${odds.toFixed(2)}]:`, value: keterangan });
-            }
-
-            let totalPayout = 0;
-            let profit = 0;
-
-            if (!adaKalahPenuh) {
-                totalPayout = totalOdds * stake;
-                profit = totalPayout - stake;
-                details.push({ key: 'Cara Hitung Odds:', value: `${rumusArr.join(' x ')} = ${totalOdds.toFixed(3)}` });
-                details.push({ key: 'Cara Hitung Bayar:', value: `${totalOdds.toFixed(3)} x Modal` });
-            } else {
-                totalOdds = 0;
-                totalPayout = 0;
-                profit = -stake;
-                details.push({ key: 'STATUS PARLAY:', value: 'LOSE (Zonk)' });
-                details.push({ key: 'Penjelasan:', value: 'Ada 1 tim Kalah Penuh, maka taruhan rungkad.' });
-            }
-
-            showResult('mp-result', buildResultHTML(details, totalOdds, stake, profit, totalPayout));
+        else if(status === 'lose-half') { 
+            finalOdds = 0.5; 
+            statusText = "Kalah Setengah (Modal Balik 50%)"; 
+            rumusText = `0.50 x Modal (Karena seri, taruhan dibagi 2)`;
         }
-
-        // 5. Asian Handicap Quarter
-        function calcAsianHDP() {
-            if(!validateInputs('ah-odds', 'ah-stake')) return;
-            const voor = parseFloat(document.getElementById('ah-voor').value);
-            const odds = parseFloat(document.getElementById('ah-odds').value);
-            const stake = parseFloat(document.getElementById('ah-stake').value);
-            const status = document.getElementById('ah-result-status').value;
-
-            let finalOdds = 0;
-            let statusText = "";
-            let rumusText = "";
-
-            if(voor === 0.25) {
-                if(status === 'win-full') { 
-                    finalOdds = odds; 
-                    statusText = "Menang Penuh"; 
-                    rumusText = `${odds.toFixed(2)} x Modal`;
-                }
-                else if(status === 'win-half') { 
-                    finalOdds = odds; 
-                    statusText = "Menang Penuh (Melewati Voor)"; 
-                    rumusText = `${odds.toFixed(2)} x Modal`;
-                }
-                else if(status === 'lose-half') { 
-                    finalOdds = 0.5; 
-                    statusText = "Kalah Setengah (Modal Balik 50%)"; 
-                    rumusText = `0.50 x Modal (Karena seri, taruhan dibagi 2)`;
-                }
-                else if(status === 'lose-full') { 
-                    finalOdds = 0; 
-                    statusText = "Kalah Penuh"; 
-                    rumusText = `0 x Modal (Taruhan rungkad)`;
-                }
-            } 
-            else if(voor === 0.75) {
-                if(status === 'win-full') { 
-                    finalOdds = odds; 
-                    statusText = "Menang Penuh"; 
-                    rumusText = `${odds.toFixed(2)} x Modal`;
-                }
-                else if(status === 'win-half') { 
-                    finalOdds = 1 + ((odds - 1) / 2); 
-                    statusText = "Menang Setengah"; 
-                    rumusText = `1 + ((${odds.toFixed(2)} - 1) / 2) x Modal`;
-                }
-                else if(status === 'lose-half') { 
-                    finalOdds = 0.5; 
-                    statusText = "Kalah Setengah (Modal Balik 50%)"; 
-                    rumusText = `0.50 x Modal`;
-                }
-                else if(status === 'lose-full') { 
-                    finalOdds = 0; 
-                    statusText = "Kalah Penuh"; 
-                    rumusText = `0 x Modal (Taruhan rungkad)`;
-                }
-            }
-
-            const totalPayout = finalOdds * stake;
-            const profit = totalPayout - stake;
-
-            const details = [
-                { key: 'Pasaran Voor:', value: voor === 0.25 ? '0.25 (1/4)' : '0.75 (3/4)' },
-                { key: 'Odds Awal:', value: odds.toFixed(2) },
-                { key: 'Kondisi Hasil:', value: statusText },
-                { key: 'Rumus Perhitungan:', value: rumusText }
-            ];
-
-            showResult('ah-result', buildResultHTML(details, finalOdds, stake, profit, totalPayout));
+        else if(status === 'lose-full') { 
+            finalOdds = 0; 
+            statusText = "Kalah Penuh"; 
+            rumusText = `0 x Modal (Taruhan rungkad)`;
         }
+    } 
+    else if(voor === 0.75) {
+        if(status === 'win-full') { 
+            finalOdds = odds; 
+            statusText = "Menang Penuh"; 
+            rumusText = `${odds.toFixed(2)} x Modal`;
+        }
+        else if(status === 'win-half') { 
+            finalOdds = 1 + ((odds - 1) / 2); 
+            statusText = "Menang Setengah"; 
+            rumusText = `1 + ((${odds.toFixed(2)} - 1) / 2) x Modal`;
+        }
+        else if(status === 'lose-half') { 
+            finalOdds = 0.5; 
+            statusText = "Kalah Setengah (Modal Balik 50%)"; 
+            rumusText = `0.50 x Modal`;
+        }
+        else if(status === 'lose-full') { 
+            finalOdds = 0; 
+            statusText = "Kalah Penuh"; 
+            rumusText = `0 x Modal (Taruhan rungkad)`;
+        }
+    }
+
+    const totalPayout = finalOdds * stake;
+    const profit = totalPayout - stake;
+
+    const details = [
+        { key: 'Pasaran Voor:', value: voor === 0.25 ? '0.25 (1/4)' : '0.75 (3/4)' },
+        { key: 'Odds Awal:', value: odds.toFixed(2) },
+        { key: 'Kondisi Hasil:', value: statusText },
+        { key: 'Rumus Perhitungan:', value: rumusText }
+    ];
+
+    showResult('ah-result', buildResultHTML(details, finalOdds, stake, profit, totalPayout));
+}
+</script>
 
   // --- KODE BARU: FUNGSI LOGIN HALAMAN DEPAN CEK FIREBASE ---
 function login(event) {
