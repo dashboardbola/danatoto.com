@@ -401,14 +401,14 @@
         // ================= PERBAIKAN LOGIN FIX =================
         function login(e) {
             e.preventDefault();
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
+            // Pakai .trim() supaya spasi kelewat saat ngetik tidak bikin gagal login
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
             const errorDiv = document.getElementById('login-error');
-            errorDiv.style.display = 'none'; // Sembunyikan error dulu
+            errorDiv.style.display = 'none'; 
 
             // 1. CEK ADMIN
             if(user === "admin" && pass === "12345") {
-            if(user === "vzqaaferandi" && pass === "1") {
                 localStorage.setItem('danatotoLogin', 'true');
                 localStorage.setItem('userRole', 'admin');
                 document.documentElement.classList.add('logged-in');
@@ -416,25 +416,23 @@
                 const menuAddUser = document.getElementById('menu-add-user');
                 if(menuAddUser) menuAddUser.style.display = 'block';
                 window.location.reload();
-                return; // Berhenti disini kalau admin
+                return; 
             }
 
-            // 2. CEK TEMAN / CS YANG SUDAH DIDAFTARKAN
+            // 2. CEK TEMAN / CS YANG SUDAH DIDAFTARKAN (LOCAL STORAGE)
             let checkUsersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || [];
             const foundUser = checkUsersDB.find(u => u.username === user && u.password === pass);
 
             if(foundUser) {
-                // Kalau ketemu dan cocok, boleh masuk
                 localStorage.setItem('danatotoLogin', 'true');
                 localStorage.setItem('userRole', 'user');
                 document.documentElement.classList.add('logged-in');
                 
                 const menuAddUser = document.getElementById('menu-add-user');
-                if(menuAddUser) menuAddUser.style.display = 'none'; // Sembunyikan Add User buat CS
+                if(menuAddUser) menuAddUser.style.display = 'none'; 
                 
                 window.location.reload();
             } else {
-                // Kalau ngga cocok baru munculin error
                 errorDiv.textContent = "Username atau Password salah!";
                 errorDiv.style.display = 'block';
             }
@@ -461,9 +459,9 @@
 
         function prosesAddUser(e) {
             e.preventDefault();
-            const u = document.getElementById('add-username').value;
-            const p = document.getElementById('add-password').value;
-            const ip = document.getElementById('add-ip').value;
+            const u = document.getElementById('add-username').value.trim();
+            const p = document.getElementById('add-password').value.trim();
+            const ip = document.getElementById('add-ip').value.trim();
             
             if(!u || !p || !ip) { alert("Semua data wajib diisi!"); return; }
             
@@ -488,7 +486,7 @@
         }
 
         function renderUserList() {
-            usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || []; // Sync dengan localstorage
+            usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || []; 
             const div = document.getElementById('user-list-display');
             if(usersDB.length === 0) {
                 div.innerHTML = '<p class="text-center text-muted mt-4" style="font-weight: 700;">Belum ada user terdaftar hari ini.</p>';
@@ -742,27 +740,22 @@
         }, false);
 
         document.addEventListener("keydown", function(e) {
-            // F12
             if (e.key === "F12" || e.keyCode === 123) {
                 e.preventDefault();
                 alert('🚫 F12 dinonaktifkan untuk keamanan!');
             }
-            // Ctrl+Shift+I (Inspect)
             if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.keyCode === 73)) {
                 e.preventDefault();
                 alert('🚫 Inspect Element dinonaktifkan!');
             }
-            // Ctrl+Shift+J (Console)
             if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j" || e.keyCode === 74)) {
                 e.preventDefault();
                 alert('🚫 Console dinonaktifkan!');
             }
-            // Ctrl+U (View Source)
             if (e.ctrlKey && (e.key === "U" || e.key === "u" || e.keyCode === 85)) {
                 e.preventDefault();
                 alert('🚫 View Source dinonaktifkan!');
             }
-            // Ctrl+S (Save)
             if (e.ctrlKey && (e.key === "S" || e.key === "s" || e.keyCode === 83)) {
                 e.preventDefault();
                 alert('🚫 Save page dinonaktifkan!');
