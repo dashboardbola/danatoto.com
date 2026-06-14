@@ -158,6 +158,8 @@
         }
         .table-user-custom th { background: #3b82f6; color: white; text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
         .table-user-custom tr:last-child td { border-bottom: none; }
+        .btn-hapus-user { background: #ef4444; color: white; border: none; padding: 5px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .btn-hapus-user:hover { background: #dc2626; }
     </style>
 </head>
 <body>
@@ -363,7 +365,7 @@
                     <form id="add-user-form" onsubmit="prosesAddUser(event)">
                         <div class="row g-3">
                             <div class="col-md-4 text-start">
-                                <label class="form-label-custom">Username CS</label>
+                                <label class="form-label-custom">Username Teman / CS</label>
                                 <input type="text" id="add-username" class="form-control-login w-100" placeholder="Username..." required>
                             </div>
                             <div class="col-md-4 text-start">
@@ -385,7 +387,21 @@
     </div> 
 
     <script>
-        let usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || [];
+        // ================= PENGATURAN LINK APPS SCRIPT =================
+        // TULIS LINK WEB APP GOOGLE SCRIPT KAMU DI BAWAH INI:
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTRS7adbZcLQffrDaE4JF6NukmYtSHfDdT6zB1AqxpGgsibRAn1IVv7jjBXvO3ijacDQ/exec';
+        // ===============================================================
+
+        // KUNCI F12 & INSPECT ELEMENT
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) { return false; } // F12
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Ctrl+Shift+I
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Ctrl+Shift+J
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // Ctrl+U
+        }
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); }); // Klik Kanan
+
+        let usersDB = [];
 
         function showPage(pageId, element) {
             document.querySelectorAll('.page-section').forEach(sec => sec.style.display = 'none');
@@ -398,42 +414,55 @@
             }
         }
 
-        // ================= PERBAIKAN LOGIN FIX =================
-        function login(e) {
+        async function login(e) {
             e.preventDefault();
-            // Pakai .trim() supaya spasi kelewat saat ngetik tidak bikin gagal login
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
             const errorDiv = document.getElementById('login-error');
-            errorDiv.style.display = 'none'; 
+            errorDiv.style.display = 'none';
 
-            // 1. CEK ADMIN
-            if(user === "admin" && pass === "12345") {
-                localStorage.setItem('danatotoLogin', 'true');
-                localStorage.setItem('userRole', 'admin');
-                document.documentElement.classList.add('logged-in');
-                
-                const menuAddUser = document.getElementById('menu-add-user');
-                if(menuAddUser) menuAddUser.style.display = 'block';
-                window.location.reload();
-                return; 
-            }
+            try {
+                // Ambil IP Publik User saat ini
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                const currentIP = ipData.ip;
 
-            // 2. CEK TEMAN / CS YANG SUDAH DIDAFTARKAN (LOCAL STORAGE)
-            let checkUsersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || [];
-            const foundUser = checkUsersDB.find(u => u.username === user && u.password === pass);
+                // Ambil data user dari Google Sheet
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers');
+                usersDB = await res.json();
 
-            if(foundUser) {
-                localStorage.setItem('danatotoLogin', 'true');
-                localStorage.setItem('userRole', 'user');
-                document.documentElement.classList.add('logged-in');
+                // Cek Admin Default (Kalau masih mau pakai admin default)
+                if(user === "admin" && pass === "12345") {
+                    localStorage.setItem('danatotoLogin', 'true');
+                    localStorage.setItem('userRole', 'admin');
+                    document.documentElement.classList.add('logged-in');
+                    const menuAddUser = document.getElementById('menu-add-user');
+                    if(menuAddUser) menuAddUser.style.display = 'block';
+                    window.location.reload();
+                    return;
+                }
+
+                // Cek User dari Database (Doc)
+                const foundUser = usersDB.find(u => u.username === user && u.password === pass);
                 
-                const menuAddUser = document.getElementById('menu-add-user');
-                if(menuAddUser) menuAddUser.style.display = 'none'; 
-                
-                window.location.reload();
-            } else {
-                errorDiv.textContent = "Username atau Password salah!";
+                if(foundUser) {
+                    if(foundUser.ip === currentIP) {
+                        localStorage.setItem('danatotoLogin', 'true');
+                        localStorage.setItem('userRole', 'user');
+                        document.documentElement.classList.add('logged-in');
+                        const menuAddUser = document.getElementById('menu-add-user');
+                        if(menuAddUser) menuAddUser.style.display = 'none'; // User biasa tidak bisa add user
+                        window.location.reload();
+                    } else {
+                        errorDiv.innerHTML = "IP Address tidak sesuai!<br>IP Anda: <b>" + currentIP + "</b><br>IP Terdaftar: <b>" + foundUser.ip + "</b>";
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    errorDiv.textContent = "Username atau Password salah!";
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = "Gagal terhubung ke server database!";
                 errorDiv.style.display = 'block';
             }
         }
@@ -457,49 +486,75 @@
             renderUserList();
         };
 
-        function prosesAddUser(e) {
+        async function prosesAddUser(e) {
             e.preventDefault();
-            const u = document.getElementById('add-username').value.trim();
-            const p = document.getElementById('add-password').value.trim();
-            const ip = document.getElementById('add-ip').value.trim();
+            const u = document.getElementById('add-username').value;
+            const p = document.getElementById('add-password').value;
+            const ip = document.getElementById('add-ip').value;
             
             if(!u || !p || !ip) { alert("Semua data wajib diisi!"); return; }
-            
-            usersDB.push({ username: u, password: p, ip: ip });
-            localStorage.setItem('danatotoUsers', JSON.stringify(usersDB));
-            alert('User baru berhasil didaftarkan secara permanen!');
-            
-            document.getElementById('add-username').value = '';
-            document.getElementById('add-password').value = '';
-            document.getElementById('add-ip').value = '';
-            
-            renderUserList();
-        }
 
-        // Tambahan fungsi hapus user
-        function deleteUser(index) {
-            if(confirm('Yakin ingin menghapus user ini?')) {
-                usersDB.splice(index, 1);
-                localStorage.setItem('danatotoUsers', JSON.stringify(usersDB));
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'add', username: u, password: p, ip: ip })
+                });
+                alert('User baru berhasil didaftarkan secara permanen!');
+                
+                document.getElementById('add-username').value = '';
+                document.getElementById('add-password').value = '';
+                document.getElementById('add-ip').value = '';
+                
                 renderUserList();
+            } catch(err) {
+                alert("Gagal menyimpan ke database!");
             }
         }
 
-        function renderUserList() {
-            usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || []; 
-            const div = document.getElementById('user-list-display');
-            if(usersDB.length === 0) {
-                div.innerHTML = '<p class="text-center text-muted mt-4" style="font-weight: 700;">Belum ada user terdaftar hari ini.</p>';
-                return;
+        async function hapusUser(username) {
+            if(confirm('Apakah kamu yakin mau hapus user: ' + username + '?')) {
+                try {
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: 'delete', username: username })
+                    });
+                    alert('User berhasil dihapus!');
+                    renderUserList();
+                } catch(err) {
+                    alert("Gagal menghapus dari database!");
+                }
             }
-            
-            let html = '<table class="table-user-custom">';
-            html += '<thead><tr><th>No</th><th>Username</th><th>Password</th><th>IP Address</th><th>Aksi</th></tr></thead><tbody>';
-            usersDB.forEach((u, index) => {
-                html += `<tr><td>${index + 1}</td><td>${u.username}</td><td>${u.password}</td><td>${u.ip}</td><td><button onclick="deleteUser(${index})" class="btn btn-sm btn-danger fw-bold">HAPUS</button></td></tr>`;
-            });
-            html += '</tbody></table>';
-            div.innerHTML = html;
+        }
+
+        async function renderUserList() {
+            const div = document.getElementById('user-list-display');
+            try {
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers');
+                usersDB = await res.json();
+
+                if(usersDB.length === 0) {
+                    div.innerHTML = '<p class="text-center text-muted mt-4" style="font-weight: 700;">Belum ada user terdaftar hari ini.</p>';
+                    return;
+                }
+                
+                let html = '<table class="table-user-custom">';
+                html += '<thead><tr><th>No</th><th>Username</th><th>Password</th><th>IP Address</th><th>Aksi</th></tr></thead><tbody>';
+                usersDB.forEach((u, index) => {
+                    html += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${u.username}</td>
+                        <td>${u.password}</td>
+                        <td>${u.ip}</td>
+                        <td><button class="btn-hapus-user" onclick="hapusUser('${u.username}')">HAPUS</button></td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                div.innerHTML = html;
+            } catch(err) {
+                div.innerHTML = '<p class="text-center text-danger mt-4" style="font-weight: 700;">Gagal memuat data dari database.</p>';
+            }
         }
 
         function showCalculator() {
@@ -732,35 +787,6 @@
             `;
             document.getElementById('mp-result').style.display = 'block';
         }
-
-        // ================= KUNCI F12 & KLIK KANAN (ANTI CURI SCRIPT) =================
-        document.addEventListener("contextmenu", function(e){
-            e.preventDefault();
-            alert('🚫 Klik kanan dinonaktifkan untuk keamanan!');
-        }, false);
-
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "F12" || e.keyCode === 123) {
-                e.preventDefault();
-                alert('🚫 F12 dinonaktifkan untuk keamanan!');
-            }
-            if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.keyCode === 73)) {
-                e.preventDefault();
-                alert('🚫 Inspect Element dinonaktifkan!');
-            }
-            if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j" || e.keyCode === 74)) {
-                e.preventDefault();
-                alert('🚫 Console dinonaktifkan!');
-            }
-            if (e.ctrlKey && (e.key === "U" || e.key === "u" || e.keyCode === 85)) {
-                e.preventDefault();
-                alert('🚫 View Source dinonaktifkan!');
-            }
-            if (e.ctrlKey && (e.key === "S" || e.key === "s" || e.keyCode === 83)) {
-                e.preventDefault();
-                alert('🚫 Save page dinonaktifkan!');
-            }
-        }, false);
     </script>
 </body>
 </html>
