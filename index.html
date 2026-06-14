@@ -74,6 +74,7 @@
         }
         .login-icon-wrapper i { font-size: 2.5rem; color: white; }
         
+        /* SIDEBAR DENGAN EFEK LAMPU NEON */
         .sidebar {
             height: 100vh; background: var(--sidebar-bg); color: white; position: fixed; width: 280px;
             padding: 20px 0; display: flex; flex-direction: column;
@@ -95,13 +96,16 @@
 
         .brand-logo { text-align: center; margin-bottom: 30px; padding: 0 20px; }
         .brand-logo a { text-decoration: none; display: inline-block; }
-        .sidebar-logo { max-width: 220px !important; height: auto !important; }
+        
+        /* PERBAIKAN LOGO: DIBESARKAN PAKAI !IMPORTANT */
+        .sidebar-logo { max-width: 180px !important; height: auto !important; }
 
         .sidebar .nav-link { color: #94a3b8; padding: 14px 25px; margin: 4px 12px; border-radius: 12px; transition: 0.3s; font-weight: 600; text-decoration: none; display: block; }
         .sidebar .nav-link:hover { background: #334155; color: white; }
         .sidebar .nav-link.active { background: var(--primary-gradient); color: white; box-shadow: 0 5px 15px rgba(59,130,246,0.3); }
         .sidebar .nav-link i { margin-right: 12px; font-size: 1.2rem; }
         
+        /* PERBAIKAN LOGOUT: MARGIN-TOP DIHAPUS AGAR NAIK ATAS */
         .sidebar-footer { margin-top: 0px; padding: 15px 12px; border-top: 1px solid #334155; }
         
         .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; width: calc(100% - 280px); }
@@ -246,8 +250,8 @@
                                 <option value="calc-dc">Double Chance</option>
                                 <option value="calc-ah">Asian Handicap Pecahan</option>
                                 <option value="calc-single">Single Bet</option>
-                                <option value="calc-parlay">Parlay (Maks 6 Tim)</option>
-                                <option value="calc-mix-parlay">Mix Parlay (Maks 6 Tim)</option>
+                                <option value="calc-parlay">Parlay </option>
+                                <option value="calc-mix-parlay">Mix Parlay </option>
                                 <option value="calc-oe">Odd / Even</option>
                                 <option value="calc-tg">Total Goal</option>
                                 <option value="calc-htft">Half Time / Full Time</option>
@@ -394,15 +398,15 @@
             }
         }
 
-        /* ================= PERBAIKAN LOGIN ================= */
+        // ================= PERBAIKAN LOGIN FIX =================
         function login(e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const errorDiv = document.getElementById('login-error');
-            errorDiv.style.display = 'none';
+            errorDiv.style.display = 'none'; // Sembunyikan error dulu
 
-            // 1. Cek Khusus Admin
+            // 1. CEK ADMIN
             if(user === "admin" && pass === "12345") {
                 localStorage.setItem('danatotoLogin', 'true');
                 localStorage.setItem('userRole', 'admin');
@@ -411,25 +415,25 @@
                 const menuAddUser = document.getElementById('menu-add-user');
                 if(menuAddUser) menuAddUser.style.display = 'block';
                 window.location.reload();
-                return;
+                return; // Berhenti disini kalau admin
             }
 
-            // 2. Cek Teman / CS yang sudah didaftarkan
-            let usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || [];
-            const foundUser = usersDB.find(u => u.username === user && u.password === pass);
+            // 2. CEK TEMAN / CS YANG SUDAH DIDAFTARKAN
+            let checkUsersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || [];
+            const foundUser = checkUsersDB.find(u => u.username === user && u.password === pass);
 
             if(foundUser) {
-                // Kalau username & password cocok, langsung masuk
+                // Kalau ketemu dan cocok, boleh masuk
                 localStorage.setItem('danatotoLogin', 'true');
                 localStorage.setItem('userRole', 'user');
                 document.documentElement.classList.add('logged-in');
                 
                 const menuAddUser = document.getElementById('menu-add-user');
-                if(menuAddUser) menuAddUser.style.display = 'none';
+                if(menuAddUser) menuAddUser.style.display = 'none'; // Sembunyikan Add User buat CS
                 
                 window.location.reload();
             } else {
-                // Kalau ngga cocok, munculin error
+                // Kalau ngga cocok baru munculin error
                 errorDiv.textContent = "Username atau Password salah!";
                 errorDiv.style.display = 'block';
             }
@@ -473,9 +477,9 @@
             renderUserList();
         }
 
-        /* ================= FUNGSI HAPUS USER ================= */
+        // Tambahan fungsi hapus user
         function deleteUser(index) {
-            if(confirm('Yakin ingin menghapus user ini secara permanen?')) {
+            if(confirm('Yakin ingin menghapus user ini?')) {
                 usersDB.splice(index, 1);
                 localStorage.setItem('danatotoUsers', JSON.stringify(usersDB));
                 renderUserList();
@@ -483,6 +487,7 @@
         }
 
         function renderUserList() {
+            usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || []; // Sync dengan localstorage
             const div = document.getElementById('user-list-display');
             if(usersDB.length === 0) {
                 div.innerHTML = '<p class="text-center text-muted mt-4" style="font-weight: 700;">Belum ada user terdaftar hari ini.</p>';
@@ -526,25 +531,48 @@
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        /* ===== RUMUS PERHITUNGAN (TIDAK DIRUSAK) ===== */
         function hitungOddsDesimal(odds) {
-            if(odds >= 0) { return 1 + odds; } 
-            else { return 1 + (1 / Math.abs(odds)); }
+            if(odds >= 0) {
+                return 1 + odds;
+            } else {
+                return 1 + (1 / Math.abs(odds));
+            }
         }
 
         function hitungProfitBersih(odds, stake) {
-            if(odds >= 0) { return stake * odds; } 
-            else { return stake / Math.abs(odds); }
+            if(odds >= 0) {
+                return stake * odds;
+            } else {
+                return stake / Math.abs(odds);
+            }
         }
 
         function calcStandard() {
             let odds = parseFloat(document.getElementById('std-odds').value);
             let stake = parseFloat(document.getElementById('std-stake').value);
+            
             if (isNaN(odds) || odds === 0) { alert("Odds wajib diisi! (Tidak boleh 0)"); return; }
             if (isNaN(stake) || stake <= 0) { alert("Nominal taruhan harus lebih dari 0!"); return; }
+
             let profit = hitungProfitBersih(odds, stake);
             let bayaran = stake + profit;
-            document.getElementById('std-result').innerHTML = `<div class="row text-white text-center"><div class="col-md-4 mb-2"><small class="text-muted d-block">Modal Taruhan</small><span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Profit Bersih</small><span class="fw-bold text-success fs-5">${formatRupiah(profit)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Total Bayaran</small><span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span></div></div>`;
+
+            document.getElementById('std-result').innerHTML = `
+                <div class="row text-white text-center">
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Modal Taruhan</small>
+                        <span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Profit Bersih</small>
+                        <span class="fw-bold text-success fs-5">${formatRupiah(profit)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Total Bayaran</small>
+                        <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
+                    </div>
+                </div>
+            `;
             document.getElementById('std-result').style.display = 'block';
         }
 
@@ -552,54 +580,161 @@
             let odds = parseFloat(document.getElementById('ah-odds').value);
             let stake = parseFloat(document.getElementById('ah-stake').value);
             let status = document.getElementById('ah-status').value;
+
             if (isNaN(odds) || odds === 0 || isNaN(stake) || stake <= 0) { alert("Lengkapi data Odds & Taruhan!"); return; }
-            let profit = 0, bayaran = 0;
-            if(status === 'win-full') { profit = hitungProfitBersih(odds, stake); bayaran = stake + profit; } 
-            else if(status === 'win-half') { profit = hitungProfitBersih(odds, stake) / 2; bayaran = stake + profit; } 
-            else if(status === 'lose-half') { profit = -(stake / 2); bayaran = stake + profit; } 
-            else if(status === 'lose-full') { profit = -stake; bayaran = 0; } 
-            else if(status === 'draw') { profit = 0; bayaran = stake; }
+
+            let profit = 0;
+            let bayaran = 0;
+
+            if(status === 'win-full') {
+                profit = hitungProfitBersih(odds, stake);
+                bayaran = stake + profit;
+            } else if(status === 'win-half') {
+                profit = hitungProfitBersih(odds, stake) / 2;
+                bayaran = stake + profit;
+            } else if(status === 'lose-half') {
+                profit = -(stake / 2);
+                bayaran = stake + profit;
+            } else if(status === 'lose-full') {
+                profit = -stake;
+                bayaran = 0;
+            } else if(status === 'draw') {
+                profit = 0;
+                bayaran = stake;
+            }
+
             let colorClass = profit > 0 ? 'text-success' : (profit < 0 ? 'text-danger' : 'text-warning');
-            document.getElementById('ah-result').innerHTML = `<div class="row text-white text-center"><div class="col-md-4 mb-2"><small class="text-muted d-block">Modal Taruhan</small><span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Hasil Profit</small><span class="fw-bold ${colorClass} fs-5">${formatRupiah(profit)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Total Dibayarkan</small><span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span></div></div>`;
+
+            document.getElementById('ah-result').innerHTML = `
+                <div class="row text-white text-center">
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Modal Taruhan</small>
+                        <span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Hasil Profit</small>
+                        <span class="fw-bold ${colorClass} fs-5">${formatRupiah(profit)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Total Dibayarkan</small>
+                        <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
+                    </div>
+                </div>
+            `;
             document.getElementById('ah-result').style.display = 'block';
         }
 
         function calcParlay() {
             let stake = parseFloat(document.getElementById('p-stake').value) || 0;
             if(stake === 0) { alert("Masukkan nominal taruhan!"); return; }
+
             let arrOdds = [];
-            for(let i=1; i<=6; i++) { let val = parseFloat(document.getElementById('p-odds'+i).value) || 0; if(val !== 0) arrOdds.push(val); }
+            for(let i=1; i<=6; i++) {
+                let val = parseFloat(document.getElementById('p-odds'+i).value) || 0;
+                if(val !== 0) arrOdds.push(val);
+            }
+
             if(arrOdds.length < 2) { alert("Parlay minimal harus ada 2 tim!"); return; }
+
             let totalOddsDecimal = 1;
-            arrOdds.forEach(o => { totalOddsDecimal *= hitungOddsDesimal(o); });
-            let bayaran = stake * totalOddsDecimal, profit = bayaran - stake;
-            document.getElementById('p-result').innerHTML = `<div class="text-center text-white mb-3"><small class="text-muted d-block">Kombinasi Odds Desimal</small><span class="fw-bold text-info fs-4">${totalOddsDecimal.toFixed(2)}</span></div><div class="row text-white text-center"><div class="col-md-4 mb-2"><small class="text-muted d-block">Modal Taruhan</small><span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Profit Bersih</small><span class="fw-bold text-success fs-5">${formatRupiah(profit)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Total Bayaran</small><span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span></div></div>`;
+            arrOdds.forEach(o => {
+                totalOddsDecimal *= hitungOddsDesimal(o);
+            });
+
+            let bayaran = stake * totalOddsDecimal;
+            let profit = bayaran - stake;
+
+            document.getElementById('p-result').innerHTML = `
+                <div class="text-center text-white mb-3">
+                    <small class="text-muted d-block">Kombinasi Odds Desimal</small>
+                    <span class="fw-bold text-info fs-4">${totalOddsDecimal.toFixed(2)}</span>
+                </div>
+                <div class="row text-white text-center">
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Modal Taruhan</small>
+                        <span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Profit Bersih</small>
+                        <span class="fw-bold text-success fs-5">${formatRupiah(profit)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Total Bayaran</small>
+                        <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
+                    </div>
+                </div>
+            `;
             document.getElementById('p-result').style.display = 'block';
         }
 
         function calcMixParlay() {
             let stake = parseFloat(document.getElementById('mp-stake').value) || 0;
             if(stake === 0) { alert("Masukkan nominal taruhan!"); return; }
+
             let items = [];
-            for(let i=1; i<=6; i++) { let odds = parseFloat(document.getElementById('mp-odds'+i).value) || 0; let status = document.getElementById('mp-status'+i).value; if(odds !== 0) items.push({odds, status}); }
+            for(let i=1; i<=6; i++) {
+                let odds = parseFloat(document.getElementById('mp-odds'+i).value) || 0;
+                let status = document.getElementById('mp-status'+i).value;
+                if(odds !== 0) items.push({odds, status});
+            }
+
             if(items.length < 2) { alert("Mix Parlay minimal harus ada 2 tim!"); return; }
-            let isLoseFull = false, totalOddsDecimal = 1;
+
+            let isLoseFull = false;
+            let totalOddsDecimal = 1;
+
             items.forEach(item => {
                 let decOdds = hitungOddsDesimal(item.odds);
-                if(item.status === 'win') { totalOddsDecimal *= decOdds; } 
-                else if(item.status === 'win-half') { let halfDecOdds = 1 + ((decOdds - 1) / 2); totalOddsDecimal *= halfDecOdds; } 
-                else if(item.status === 'lose-half') { totalOddsDecimal *= 0.5; } 
-                else if(item.status === 'lose') { isLoseFull = true; }
+
+                if(item.status === 'win') {
+                    totalOddsDecimal *= decOdds;
+                } else if(item.status === 'win-half') {
+                    let halfDecOdds = 1 + ((decOdds - 1) / 2);
+                    totalOddsDecimal *= halfDecOdds;
+                } else if(item.status === 'lose-half') {
+                    totalOddsDecimal *= 0.5;
+                } else if(item.status === 'lose') {
+                    isLoseFull = true;
+                }
             });
-            let bayaran = 0, profit = 0;
-            if(isLoseFull) { bayaran = 0; profit = -stake; } 
-            else { bayaran = stake * totalOddsDecimal; profit = bayaran - stake; }
+
+            let bayaran = 0;
+            let profit = 0;
+            
+            if(isLoseFull) {
+                bayaran = 0;
+                profit = -stake;
+            } else {
+                bayaran = stake * totalOddsDecimal;
+                profit = bayaran - stake;
+            }
+
             let colorClass = profit >= 0 ? 'text-success' : 'text-danger';
-            document.getElementById('mp-result').innerHTML = `<div class="text-center text-white mb-3"><small class="text-muted d-block">Kombinasi Odds Final</small><span class="fw-bold text-info fs-4">${totalOddsDecimal.toFixed(2)}</span></div><div class="row text-white text-center"><div class="col-md-4 mb-2"><small class="text-muted d-block">Modal Taruhan</small><span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Hasil Profit</small><span class="fw-bold ${colorClass} fs-5">${formatRupiah(profit)}</span></div><div class="col-md-4 mb-2"><small class="text-muted d-block">Total Bayaran</small><span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span></div></div>`;
+
+            document.getElementById('mp-result').innerHTML = `
+                <div class="text-center text-white mb-3">
+                    <small class="text-muted d-block">Kombinasi Odds Final</small>
+                    <span class="fw-bold text-info fs-4">${totalOddsDecimal.toFixed(2)}</span>
+                </div>
+                <div class="row text-white text-center">
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Modal Taruhan</small>
+                        <span class="fw-bold text-light fs-5">${formatRupiah(stake)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Hasil Profit</small>
+                        <span class="fw-bold ${colorClass} fs-5">${formatRupiah(profit)}</span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <small class="text-muted d-block">Total Bayaran</small>
+                        <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
+                    </div>
+                </div>
+            `;
             document.getElementById('mp-result').style.display = 'block';
         }
 
-        /* ===== KUNCI F12 & KLIK KANAN (ANTI CURI SCRIPT) ===== */
+        // ================= KUNCI F12 & KLIK KANAN (ANTI CURI SCRIPT) =================
         document.addEventListener("contextmenu", function(e){
             e.preventDefault();
             alert('🚫 Klik kanan dinonaktifkan untuk keamanan!');
@@ -611,22 +746,22 @@
                 e.preventDefault();
                 alert('🚫 F12 dinonaktifkan untuk keamanan!');
             }
-            // Ctrl+Shift+I / Cmd+Opt+I (Inspect)
+            // Ctrl+Shift+I (Inspect)
             if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.keyCode === 73)) {
                 e.preventDefault();
                 alert('🚫 Inspect Element dinonaktifkan!');
             }
-            // Ctrl+Shift+J / Cmd+Opt+J (Console)
+            // Ctrl+Shift+J (Console)
             if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j" || e.keyCode === 74)) {
                 e.preventDefault();
                 alert('🚫 Console dinonaktifkan!');
             }
-            // Ctrl+U / Cmd+U (View Source)
+            // Ctrl+U (View Source)
             if (e.ctrlKey && (e.key === "U" || e.key === "u" || e.keyCode === 85)) {
                 e.preventDefault();
                 alert('🚫 View Source dinonaktifkan!');
             }
-            // Ctrl+S / Cmd+S (Save)
+            // Ctrl+S (Save)
             if (e.ctrlKey && (e.key === "S" || e.key === "s" || e.keyCode === 83)) {
                 e.preventDefault();
                 alert('🚫 Save page dinonaktifkan!');
