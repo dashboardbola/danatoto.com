@@ -415,10 +415,16 @@
         }
 
         async function login(e) {
-            e.preventDefault();
+            e.preventDefault(); // MENCEGAH PAGE RELOAD SAAT ENTER
+            
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const errorDiv = document.getElementById('login-error');
+            const btnLogin = document.querySelector('#login-page button[type=submit]');
+            
+            // BIAR NGGAK DICLIK BERULANG KALI LAMA
+            btnLogin.innerHTML = 'MEMPROSES...'; 
+            btnLogin.disabled = true;
             errorDiv.style.display = 'none';
 
             try {
@@ -431,7 +437,7 @@
                 const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers');
                 usersDB = await res.json();
 
-                // Cek Admin Default (Kalau masih mau pakai admin default)
+                // Cek Admin Default
                 if(user === "admin" && pass === "12345") {
                     localStorage.setItem('danatotoLogin', 'true');
                     localStorage.setItem('userRole', 'admin');
@@ -446,15 +452,18 @@
                 const foundUser = usersDB.find(u => u.username === user && u.password === pass);
                 
                 if(foundUser) {
+                    // CEK KEAMANAN IP SEPERTI YANG KAMU MINTA
                     if(foundUser.ip === currentIP) {
                         localStorage.setItem('danatotoLogin', 'true');
                         localStorage.setItem('userRole', 'user');
                         document.documentElement.classList.add('logged-in');
                         const menuAddUser = document.getElementById('menu-add-user');
-                        if(menuAddUser) menuAddUser.style.display = 'none'; // User biasa tidak bisa add user
+                        if(menuAddUser) menuAddUser.style.display = 'none';
                         window.location.reload();
                     } else {
-                        errorDiv.innerHTML = "IP Address tidak sesuai!<br>IP Anda: <b>" + currentIP + "</b><br>IP Terdaftar: <b>" + foundUser.ip + "</b>";
+                        // JIKA IP BEDA, SURUH TEMANMU NGASIH IP NYA KE KAMU
+                        alert("GAGAL LOGIN! IP Address kamu saat ini (" + currentIP + ") tidak cocok dengan yang terdaftar di Doc (" + foundUser.ip + "). \n\nScreenshot pesan ini dan kirim ke Admin agar IP di-update!");
+                        errorDiv.innerHTML = "IP Tidak Sesuai! Cek pop-up alert.";
                         errorDiv.style.display = 'block';
                     }
                 } else {
@@ -462,8 +471,12 @@
                     errorDiv.style.display = 'block';
                 }
             } catch (err) {
-                errorDiv.textContent = "Gagal terhubung ke server database!";
+                errorDiv.textContent = "Gagal terhubung ke server database! Coba lagi.";
                 errorDiv.style.display = 'block';
+            } finally {
+                // KEMBALIKAN TOMBOL KE AWAL SETELAH SELESAI (SUKSES ATAU GAGAL)
+                btnLogin.innerHTML = 'MASUK DASHBOARD';
+                btnLogin.disabled = false;
             }
         }
 
