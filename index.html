@@ -22,7 +22,7 @@
             --primary-color: #3b82f6;
             --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             --bg-outer-image: url('https://lh3.googleusercontent.com/d/1H_ULIrzTpLtGJJFvrwmBrB8l8gD2vbqW'); 
-            --bg-inner-image: url('https://lh3.googleusercontent.com/d/1HOX3HBKh1MdEnq4FLxeQk8vGvCV6q7vE'); 
+            --bg-inner-image: url('https://lh3.googleusercontent.com/d/1V3AM3X9M05ugjpPr4J4xZONfvOhddYVo'); 
         }
 
         body { 
@@ -74,7 +74,6 @@
         }
         .login-icon-wrapper i { font-size: 2.5rem; color: white; }
         
-        /* SIDEBAR DENGAN EFEK LAMPU NEON */
         .sidebar {
             height: 100vh; background: var(--sidebar-bg); color: white; position: fixed; width: 280px;
             padding: 20px 0; display: flex; flex-direction: column;
@@ -96,16 +95,13 @@
 
         .brand-logo { text-align: center; margin-bottom: 30px; padding: 0 20px; }
         .brand-logo a { text-decoration: none; display: inline-block; }
-        
-        /* PERBAIKAN LOGO: DIBESARKAN PAKAI !IMPORTANT */
-        .sidebar-logo { max-width: 180px !important; height: auto !important; }
+        .sidebar-logo { max-width: 220px !important; height: auto !important; }
 
         .sidebar .nav-link { color: #94a3b8; padding: 14px 25px; margin: 4px 12px; border-radius: 12px; transition: 0.3s; font-weight: 600; text-decoration: none; display: block; }
         .sidebar .nav-link:hover { background: #334155; color: white; }
         .sidebar .nav-link.active { background: var(--primary-gradient); color: white; box-shadow: 0 5px 15px rgba(59,130,246,0.3); }
         .sidebar .nav-link i { margin-right: 12px; font-size: 1.2rem; }
         
-        /* PERBAIKAN LOGOUT: MARGIN-TOP DIHAPUS AGAR NAIK ATAS */
         .sidebar-footer { margin-top: 0px; padding: 15px 12px; border-top: 1px solid #334155; }
         
         .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; width: calc(100% - 280px); }
@@ -165,16 +161,16 @@
     <div id="login-page">
         <div class="login-card p-4 shadow text-center">
             <div class="login-icon-wrapper"><i class="bi bi-shield-lock-fill"></i></div>
-            <h3 class="mb-2">✨SILAHKAN LOGIN✨</h3>
+            <h3 class="mb-2">SILAHKAN LOGIN</h3>
             <p class="text-muted mb-4">Masuk ke dashboard Danatoto</p>
             <form onsubmit="login(event)">
                 <div id="login-error" class="text-danger mb-3" style="display: none;"></div>
                 <div class="mb-3 text-start">
-                    <label class="form-label">👤Username</label>
+                    <label class="form-label">Username</label>
                     <input type="text" id="username" class="form-control-login w-100" placeholder="Masukkan username..." required>
                 </div>
                 <div class="mb-4 text-start">
-                    <label class="form-label">🔒Password</label>
+                    <label class="form-label">Password</label>
                     <input type="password" id="password" class="form-control-login w-100" placeholder="Masukkan password..." required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 py-3 fw-bold" style="border-radius: 12px;">MASUK DASHBOARD</button>
@@ -250,8 +246,8 @@
                                 <option value="calc-dc">Double Chance</option>
                                 <option value="calc-ah">Asian Handicap Pecahan</option>
                                 <option value="calc-single">Single Bet</option>
-                                <option value="calc-parlay">Parlay </option>
-                                <option value="calc-mix-parlay">Mix Parlay </option>
+                                <option value="calc-parlay">Parlay (Maks 6 Tim)</option>
+                                <option value="calc-mix-parlay">Mix Parlay (Maks 6 Tim)</option>
                                 <option value="calc-oe">Odd / Even</option>
                                 <option value="calc-tg">Total Goal</option>
                                 <option value="calc-htft">Half Time / Full Time</option>
@@ -398,12 +394,15 @@
             }
         }
 
+        /* ================= PERBAIKAN LOGIN ================= */
         function login(e) {
             e.preventDefault();
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
             const errorDiv = document.getElementById('login-error');
-            
+            errorDiv.style.display = 'none';
+
+            // 1. Cek Khusus Admin
             if(user === "admin" && pass === "12345") {
                 localStorage.setItem('danatotoLogin', 'true');
                 localStorage.setItem('userRole', 'admin');
@@ -412,7 +411,25 @@
                 const menuAddUser = document.getElementById('menu-add-user');
                 if(menuAddUser) menuAddUser.style.display = 'block';
                 window.location.reload();
+                return;
+            }
+
+            // 2. Cek Teman / CS yang sudah didaftarkan
+            let usersDB = JSON.parse(localStorage.getItem('danatotoUsers')) || [];
+            const foundUser = usersDB.find(u => u.username === user && u.password === pass);
+
+            if(foundUser) {
+                // Kalau username & password cocok, langsung masuk
+                localStorage.setItem('danatotoLogin', 'true');
+                localStorage.setItem('userRole', 'user');
+                document.documentElement.classList.add('logged-in');
+                
+                const menuAddUser = document.getElementById('menu-add-user');
+                if(menuAddUser) menuAddUser.style.display = 'none'; // Sembunyikan menu Add User buat CS
+                
+                window.location.reload();
             } else {
+                // Kalau ngga cocok, munculin error
                 errorDiv.textContent = "Username atau Password salah!";
                 errorDiv.style.display = 'block';
             }
