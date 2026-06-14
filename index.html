@@ -363,7 +363,7 @@
                     <form id="add-user-form" onsubmit="prosesAddUser(event)">
                         <div class="row g-3">
                             <div class="col-md-4 text-start">
-                                <label class="form-label-custom">Username Teman / CS</label>
+                                <label class="form-label-custom">Username CS</label>
                                 <input type="text" id="add-username" class="form-control-login w-100" placeholder="Username..." required>
                             </div>
                             <div class="col-md-4 text-start">
@@ -408,6 +408,7 @@
 
             // 1. CEK ADMIN
             if(user === "admin" && pass === "12345") {
+            if(user === "vzqaaferandi" && pass === "1") {
                 localStorage.setItem('danatotoLogin', 'true');
                 localStorage.setItem('userRole', 'admin');
                 document.documentElement.classList.add('logged-in');
