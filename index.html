@@ -366,15 +366,18 @@
                         <div class="row g-3">
                             <div class="col-md-4 text-start">
                                 <label class="form-label-custom">Username Teman / CS</label>
-                                <input type="text" id="add-username" class="form-control-login w-100" placeholder="Username..." required>
+                                <!-- required DIHAPUS AGAR TIDAK DOUBLE POPUP -->
+                                <input type="text" id="add-username" class="form-control-login w-100" placeholder="Username...">
                             </div>
                             <div class="col-md-4 text-start">
                                 <label class="form-label-custom">Password</label>
-                                <input type="password" id="add-password" class="form-control-login w-100" placeholder="Password..." required>
+                                <!-- required DIHAPUS AGAR TIDAK DOUBLE POPUP -->
+                                <input type="password" id="add-password" class="form-control-login w-100" placeholder="Password...">
                             </div>
                             <div class="col-md-4 text-start">
                                 <label class="form-label-custom">IP Filtering</label>
-                                <input type="text" id="add-ip" class="form-control-login w-100" placeholder="IP Address..." required>
+                                <!-- required DIHAPUS AGAR TIDAK DOUBLE POPUP -->
+                                <input type="text" id="add-ip" class="form-control-login w-100" placeholder="IP Address...">
                             </div>
                             <div class="col-12"><button type="submit" class="btn btn-primary w-100 mt-2 fw-bold py-3" style="border-radius: 12px; font-weight: 800;">DAFTARKAN SECARA PERMANEN</button></div>
                         </div>
@@ -417,14 +420,13 @@
         async function login(e) {
             e.preventDefault(); // MENCEGAH PAGE RELOAD SAAT ENTER
             
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const errorDiv = document.getElementById('login-error');
             const btnLogin = document.querySelector('#login-page button[type=submit]');
-            
-            // BIAR NGGAK DICLIK BERULANG KALI LAMA
             btnLogin.innerHTML = 'MEMPROSES...'; 
             btnLogin.disabled = true;
+            
+            const user = document.getElementById('username').value.trim().toLowerCase(); // PAKSA HURUF KECIL & HAPUS SPASI
+            const pass = document.getElementById('password').value.trim(); // HAPUS SPASI
+            const errorDiv = document.getElementById('login-error');
             errorDiv.style.display = 'none';
 
             try {
@@ -433,8 +435,8 @@
                 const ipData = await ipRes.json();
                 const currentIP = ipData.ip;
 
-                // Ambil data user dari Google Sheet
-                const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers');
+                // Ambil data user dari Google Sheet + BYPASS CACHE
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + new Date().getTime());
                 usersDB = await res.json();
 
                 // Cek Admin Default
@@ -448,12 +450,17 @@
                     return;
                 }
 
-                // Cek User dari Database (Doc)
-                const foundUser = usersDB.find(u => u.username === user && u.password === pass);
+                // Cek User dari Database (Doc) - Perbandingan Aman (Huruf & Spasi)
+                const foundUser = usersDB.find(u => {
+                    const dbUser = String(u.username).trim().toLowerCase();
+                    const dbPass = String(u.password).trim();
+                    return dbUser === user && dbPass === pass;
+                });
                 
                 if(foundUser) {
-                    // CEK KEAMANAN IP SEPERTI YANG KAMU MINTA
-                    if(foundUser.ip === currentIP) {
+                    const dbIP = String(foundUser.ip).trim();
+                    // CEK KEAMANAN IP
+                    if(dbIP === currentIP) {
                         localStorage.setItem('danatotoLogin', 'true');
                         localStorage.setItem('userRole', 'user');
                         document.documentElement.classList.add('logged-in');
@@ -461,8 +468,7 @@
                         if(menuAddUser) menuAddUser.style.display = 'none';
                         window.location.reload();
                     } else {
-                        // JIKA IP BEDA, SURUH TEMANMU NGASIH IP NYA KE KAMU
-                        alert("GAGAL LOGIN! IP Address kamu saat ini (" + currentIP + ") tidak cocok dengan yang terdaftar di Doc (" + foundUser.ip + "). \n\nScreenshot pesan ini dan kirim ke Admin agar IP di-update!");
+                        alert("GAGAL LOGIN! IP Address kamu saat ini (" + currentIP + ") tidak cocok dengan yang terdaftar di Doc (" + dbIP + "). \n\nScreenshot pesan ini dan kirim ke Admin agar IP di-update!");
                         errorDiv.innerHTML = "IP Tidak Sesuai! Cek pop-up alert.";
                         errorDiv.style.display = 'block';
                     }
@@ -474,7 +480,6 @@
                 errorDiv.textContent = "Gagal terhubung ke server database! Coba lagi.";
                 errorDiv.style.display = 'block';
             } finally {
-                // KEMBALIKAN TOMBOL KE AWAL SETELAH SELESAI (SUKSES ATAU GAGAL)
                 btnLogin.innerHTML = 'MASUK DASHBOARD';
                 btnLogin.disabled = false;
             }
@@ -501,9 +506,9 @@
 
         async function prosesAddUser(e) {
             e.preventDefault();
-            const u = document.getElementById('add-username').value;
-            const p = document.getElementById('add-password').value;
-            const ip = document.getElementById('add-ip').value;
+            const u = document.getElementById('add-username').value.trim().toLowerCase(); // PAKSA HURUF KECIL
+            const p = document.getElementById('add-password').value.trim();
+            const ip = document.getElementById('add-ip').value.trim();
             
             if(!u || !p || !ip) { alert("Semua data wajib diisi!"); return; }
 
@@ -544,7 +549,8 @@
         async function renderUserList() {
             const div = document.getElementById('user-list-display');
             try {
-                const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers');
+                // BYPASS CACHE SELALU AGAR DATA TERBARU
+                const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + new Date().getTime());
                 usersDB = await res.json();
 
                 if(usersDB.length === 0) {
