@@ -388,7 +388,7 @@
 
         </div> 
     </div> 
-           <script>
+         <script>
         // ================= PENGATURAN LINK APPS SCRIPT =================
         // TULIS LINK WEB APP GOOGLE SCRIPT KAMU DI BAWAH INI:
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTRS7adbZcLQffrDaE4JF6NukmYtSHfDdT6zB1AqxpGgsibRAn1IVv7jjBXvO3ijacDQ/exec';
@@ -589,7 +589,7 @@
                 document.getElementById('std-stake').value = '';
                 
                 const stdLabel = document.querySelector('label[for="std-odds"]') || document.getElementById('calc-standard').querySelector('.form-label-custom');
-                if(stdLabel) stdLabel.innerText = 'Odds (Desimal / Indo Minus)';
+                if(stdLabel) stdLabel.innerText = 'Odds (Desimal / Indo)';
                 document.getElementById('std-odds').placeholder = 'Contoh: 2.50 / 0.85 / -1.25';
                 
             } else if(value) {
@@ -602,21 +602,23 @@
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        // RUMUS UNTUK ODDS INDONESIA
+        // KONVERSI OTOMATIS SEMUA JENIS ODDS JADI DESIMAL
+        function hitungOddsDesimal(odds) {
+            if(odds >= 1.00) {
+                return odds; // Sudah desimal (misal 2.50)
+            } else if(odds >= 0) {
+                return 1 + odds; // Odds Indo Plus (misal 0.85 jadi 1.85)
+            } else {
+                return 1 + (1 / Math.abs(odds)); // Odds Indo Minus (misal -1.25 jadi 1.80)
+            }
+        }
+
+        // RUMUS UNTUK HANDICAP, OU, SINGLE BET (PAKAI ODDS INDONESIA)
         function hitungProfitBersih(odds, stake) {
             if(odds >= 0) {
                 return stake * odds;
             } else {
                 return stake / Math.abs(odds);
-            }
-        }
-
-        // KONVERSI ODDS INDONESIA KE DESIMAL (PARLAY)
-        function hitungOddsDesimal(odds) {
-            if(odds >= 0) {
-                return 1 + odds;
-            } else {
-                return 1 + (1 / Math.abs(odds));
             }
         }
 
@@ -629,37 +631,35 @@
             if (isNaN(stake) || stake <= 0) { alert("Nominal taruhan harus lebih dari 0!"); return; }
 
             let profit = 0;
+            let bayaran = 0;
             let rumusDipakai = "";
+            
+            // DAFTAR JENIS PERMAINAN YANG PAKAI RUMUS (ODDS - 1) x BET
             const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
             
             if (euOddsTypes.includes(type)) {
-                if (odds >= 1.00) {
-                    // RUMUS YANG KAMU MINTA: (Odds - 1) x Bettingan
-                    profit = (odds - 1) * stake;
-                    rumusDipakai = "✅ Rumus Terpakai: (Odds - 1) x Bet";
-                } else {
-                    // JIKA BANDAR KASIH ODDS MINUS/DIBAWAH 1 (FORMAT INDONESIA)
-                    if(odds >= 0) {
-                        profit = stake * odds;
-                    } else {
-                        profit = stake / Math.abs(odds);
-                    }
-                    rumusDipakai = "⚠️ Odds < 1.00 terdeteksi format Indo. Rumus otomatis disesuaikan.";
-                }
+                // LANGKAH 1: Konversi dulu angka apapun ke Odds Desimal
+                let finalOddsDesimal = hitungOddsDesimal(odds);
+                
+                // LANGKAH 2: Pakai rumus yang kamu mau (Odds Desimal - 1) x Bet
+                profit = (finalOddsDesimal - 1) * stake;
+                bayaran = stake + profit;
+                
+                rumusDipakai = `✅ Rumus Terpakai: (Odds Desimal - 1) x Bet<br>Detail: (${finalOddsDesimal.toFixed(2)} - 1) x ${formatRupiah(stake)}`;
             } else {
-                // RUMUS HANDICAP & OVER/UNDER
-                if(odds >= 0) {
-                    profit = stake * odds;
+                // RUMUS HANDICAP & OVER/UNDER (ODDS INDONESIA)
+                if(odds >= 1.00) {
+                    profit = (odds - 1) * stake;
+                    rumusDipakai = `✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)`;
                 } else {
-                    profit = stake / Math.abs(odds);
+                    profit = hitungProfitBersih(odds, stake);
+                    rumusDipakai = `✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)`;
                 }
-                rumusDipakai = "✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)";
+                bayaran = stake + profit;
             }
 
-            let bayaran = stake + profit;
-
             document.getElementById('std-result').innerHTML = `
-                <div class="text-center text-info mb-3"><small style="font-weight: 800;">${rumusDipakai}</small></div>
+                <div class="text-center text-info mb-3"><small style="font-weight: 800; line-height: 1.4;">${rumusDipakai}</small></div>
                 <div class="row text-white text-center">
                     <div class="col-md-4 mb-2">
                         <small class="text-muted d-block">Modal Taruhan</small>
