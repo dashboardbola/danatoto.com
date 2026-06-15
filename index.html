@@ -388,7 +388,7 @@
 
         </div> 
     </div> 
-
+    
     <script>
         // ================= PENGATURAN LINK APPS SCRIPT =================
         // TULIS LINK WEB APP GOOGLE SCRIPT KAMU DI BAWAH INI:
@@ -418,28 +418,25 @@
         }
 
         async function login(e) {
-            e.preventDefault(); // MENCEGAH PAGE RELOAD SAAT ENTER
+            e.preventDefault();
             
             const btnLogin = document.querySelector('#login-page button[type=submit]');
             btnLogin.innerHTML = 'MEMPROSES...'; 
             btnLogin.disabled = true;
             
-            const user = document.getElementById('username').value.trim().toLowerCase(); // PAKSA HURUF KECIL & HAPUS SPASI
-            const pass = document.getElementById('password').value.trim(); // HAPUS SPASI
+            const user = document.getElementById('username').value.trim().toLowerCase();
+            const pass = document.getElementById('password').value.trim();
             const errorDiv = document.getElementById('login-error');
             errorDiv.style.display = 'none';
 
             try {
-                // Ambil IP Publik User saat ini
                 const ipRes = await fetch('https://api.ipify.org?format=json');
                 const ipData = await ipRes.json();
                 const currentIP = ipData.ip;
 
-                // Ambil data user dari Google Sheet + BYPASS CACHE
                 const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + new Date().getTime());
                 usersDB = await res.json();
 
-                // Cek Admin Default
                 if(user === "admin" && pass === "12345") {
                     localStorage.setItem('danatotoLogin', 'true');
                     localStorage.setItem('userRole', 'admin');
@@ -450,7 +447,6 @@
                     return;
                 }
 
-                // Cek User dari Database (Doc) - Perbandingan Aman (Huruf & Spasi)
                 const foundUser = usersDB.find(u => {
                     const dbUser = String(u.username).trim().toLowerCase();
                     const dbPass = String(u.password).trim();
@@ -459,7 +455,6 @@
                 
                 if(foundUser) {
                     const dbIP = String(foundUser.ip).trim();
-                    // CEK KEAMANAN IP
                     if(dbIP === currentIP) {
                         localStorage.setItem('danatotoLogin', 'true');
                         localStorage.setItem('userRole', 'user');
@@ -506,7 +501,7 @@
 
         async function prosesAddUser(e) {
             e.preventDefault();
-            const u = document.getElementById('add-username').value.trim().toLowerCase(); // PAKSA HURUF KECIL
+            const u = document.getElementById('add-username').value.trim().toLowerCase();
             const p = document.getElementById('add-password').value.trim();
             const ip = document.getElementById('add-ip').value.trim();
             
@@ -549,7 +544,6 @@
         async function renderUserList() {
             const div = document.getElementById('user-list-display');
             try {
-                // BYPASS CACHE SELALU AGAR DATA TERBARU
                 const res = await fetch(APPS_SCRIPT_URL + '?action=getUsers&t=' + new Date().getTime());
                 usersDB = await res.json();
 
@@ -594,6 +588,14 @@
                 document.getElementById('std-result').style.display = 'none'; 
                 document.getElementById('std-odds').value = '';
                 document.getElementById('std-stake').value = '';
+                
+                // Ganti Placeholder berdasarkan jenis permainan
+                const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
+                if(euOddsTypes.includes(value)) {
+                    document.getElementById('std-odds').placeholder = 'Contoh Odds Desimal: 2.50';
+                } else {
+                    document.getElementById('std-odds').placeholder = 'Contoh Odds Indo: 1.50 atau -1.25';
+                }
             } else if(value) {
                 document.getElementById(value).style.display = 'block';
                 const resId = value.replace('calc-', '') + '-result';
@@ -604,14 +606,7 @@
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        function hitungOddsDesimal(odds) {
-            if(odds >= 0) {
-                return 1 + odds;
-            } else {
-                return 1 + (1 / Math.abs(odds));
-            }
-        }
-
+        // RUMUS UNTUK ODDS INDONESIA (HANDICAP, OU, SINGLE BET)
         function hitungProfitBersih(odds, stake) {
             if(odds >= 0) {
                 return stake * odds;
@@ -620,15 +615,41 @@
             }
         }
 
+        // KONVERSI ODDS INDONESIA KE DESIMAL (UNTUK PARLAY & MIX PARLAY)
+        function hitungOddsDesimal(odds) {
+            if(odds >= 0) {
+                return 1 + odds;
+            } else {
+                return 1 + (1 / Math.abs(odds));
+            }
+        }
+
         function calcStandard() {
             let odds = parseFloat(document.getElementById('std-odds').value);
             let stake = parseFloat(document.getElementById('std-stake').value);
+            let type = document.getElementById('calc-filter').value; 
             
             if (isNaN(odds) || odds === 0) { alert("Odds wajib diisi! (Tidak boleh 0)"); return; }
             if (isNaN(stake) || stake <= 0) { alert("Nominal taruhan harus lebih dari 0!"); return; }
 
-            let profit = hitungProfitBersih(odds, stake);
-            let bayaran = stake + profit;
+            let profit = 0;
+            
+            // DAFTAR JENIS PERMAINAN YANG PAKAI ODDS EROPA / DESIMAL
+            const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
+            
+            if (euOddsTypes.includes(type)) {
+                // RUMUS 1X2 & LAINNYA (ODDS DESIMAL)
+                if (odds < 1) { 
+                    alert("Odds Desimal/Eropa (1X2, CS, dll) tidak boleh kurang dari 1.00!"); 
+                    return; 
+                }
+                profit = (odds - 1) * stake; // RUMUS: (Odds - 1) x Bettingan
+            } else {
+                // RUMUS HANDICAP & OVER/UNDER (ODDS INDONESIA)
+                profit = hitungProfitBersih(odds, stake);
+            }
+
+            let bayaran = stake + profit; // Modal kembali + profit
 
             document.getElementById('std-result').innerHTML = `
                 <div class="row text-white text-center">
@@ -667,13 +688,13 @@
                 bayaran = stake + profit;
             } else if(status === 'lose-half') {
                 profit = -(stake / 2);
-                bayaran = stake + profit;
+                bayaran = stake + profit; // Modal dikembalikan setengah
             } else if(status === 'lose-full') {
                 profit = -stake;
-                bayaran = 0;
+                bayaran = 0; // Modal hangus
             } else if(status === 'draw') {
                 profit = 0;
-                bayaran = stake;
+                bayaran = stake; // Modal dikembalikan full (Push)
             }
 
             let colorClass = profit > 0 ? 'text-success' : (profit < 0 ? 'text-danger' : 'text-warning');
@@ -711,7 +732,7 @@
 
             let totalOddsDecimal = 1;
             arrOdds.forEach(o => {
-                totalOddsDecimal *= hitungOddsDesimal(o);
+                totalOddsDecimal *= hitungOddsDesimal(o); // Dikonversi ke desimal dulu lalu dikalikan
             });
 
             let bayaran = stake * totalOddsDecimal;
@@ -762,10 +783,15 @@
                 if(item.status === 'win') {
                     totalOddsDecimal *= decOdds;
                 } else if(item.status === 'win-half') {
+                    // Menang setengah: odds dikurangi 1, dibagi 2, lalu ditambah 1
                     let halfDecOdds = 1 + ((decOdds - 1) / 2);
                     totalOddsDecimal *= halfDecOdds;
                 } else if(item.status === 'lose-half') {
+                    // Kalah setengah: dikali 0.5
                     totalOddsDecimal *= 0.5;
+                } else if(item.status === 'draw') {
+                    // Seri / Push: dikali 1 (tidak merubah nilai perkalian)
+                    totalOddsDecimal *= 1;
                 } else if(item.status === 'lose') {
                     isLoseFull = true;
                 }
@@ -807,5 +833,3 @@
             document.getElementById('mp-result').style.display = 'block';
         }
     </script>
-</body>
-</html>
