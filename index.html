@@ -388,8 +388,7 @@
 
         </div> 
     </div> 
-    
-         <script>
+        <script>
         // ================= PENGATURAN LINK APPS SCRIPT =================
         // TULIS LINK WEB APP GOOGLE SCRIPT KAMU DI BAWAH INI:
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTRS7adbZcLQffrDaE4JF6NukmYtSHfDdT6zB1AqxpGgsibRAn1IVv7jjBXvO3ijacDQ/exec';
@@ -589,17 +588,11 @@
                 document.getElementById('std-odds').value = '';
                 document.getElementById('std-stake').value = '';
                 
-                // SISTEM PINTAR: Ganti Label & Placeholder sesuai jenis permainan
-                const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
+                // LABEL DISAMAKAN SEHINGGA TIDAK MEMBINGUNGKAN
                 const stdLabel = document.querySelector('label[for="std-odds"]') || document.getElementById('calc-standard').querySelector('.form-label-custom');
+                if(stdLabel) stdLabel.innerText = 'Odds (Desimal / Indo Minus)';
+                document.getElementById('std-odds').placeholder = 'Contoh: 2.50 / 0.85 / -1.25';
                 
-                if(euOddsTypes.includes(value)) {
-                    if(stdLabel) stdLabel.innerText = 'Odds Desimal (1X2 / Eropa)';
-                    document.getElementById('std-odds').placeholder = 'Contoh: 2.50';
-                } else {
-                    if(stdLabel) stdLabel.innerText = 'Odds Indonesia (Minus/Plus)';
-                    document.getElementById('std-odds').placeholder = 'Contoh: 1.50 atau -1.25';
-                }
             } else if(value) {
                 document.getElementById(value).style.display = 'block';
                 const resId = value.replace('calc-', '') + '-result';
@@ -610,7 +603,7 @@
 
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        // RUMUS UNTUK ODDS INDONESIA (HANDICAP, OU, SINGLE BET)
+        // RUMUS UNTUK ODDS INDONESIA (MINUS/PLUS)
         function hitungProfitBersih(odds, stake) {
             if(odds >= 0) {
                 return stake * odds;
@@ -631,29 +624,27 @@
         function calcStandard() {
             let odds = parseFloat(document.getElementById('std-odds').value);
             let stake = parseFloat(document.getElementById('std-stake').value);
-            let type = document.getElementById('calc-filter').value; 
             
             if (isNaN(odds) || odds === 0) { alert("Odds wajib diisi! (Tidak boleh 0)"); return; }
             if (isNaN(stake) || stake <= 0) { alert("Nominal taruhan harus lebih dari 0!"); return; }
 
             let profit = 0;
             
-            // DAFTAR JENIS PERMAINAN YANG PAKAI RUMUS DESIMAL (1X2: odds - 1 x bet)
-            const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
-            
-            if (euOddsTypes.includes(type)) {
-                // RUMUS 1X2 (ODDS DESIMAL)
-                if (odds < 1) { 
-                    alert("Odds Desimal/Eropa (1X2, CS, dll) tidak boleh kurang dari 1.00!"); 
-                    return; 
-                }
-                profit = (odds - 1) * stake; // RUMUS YANG KAMU MINTA: (Odds - 1) x Bettingan
-            } else {
-                // RUMUS HANDICAP & OVER/UNDER (ODDS INDONESIA)
+            // SISTEM PINTAR FLEKSIBEL
+            // Kalau odds nya 1.00 ke atas (bisa jadi Odds Desimal 1x2, atau Odds Indo Plus)
+            if (odds >= 1.00) {
+                // Kita pakai rumus (Odds - 1) x Bet sesuai permintaan 1x2
+                // Kenapa? Karena Odds Desimal 1.85, profitnya (1.85-1) = 0.85 x bet.
+                // Dan Odds Indo 1.50, profitnya juga sama jika dihitung (1.50-1) = 0.50 x bet. Jadi aman!
+                profit = (odds - 1) * stake; 
+            } 
+            // Kalau odds nya di bawah 1.00 (seperti 0.85, atau -0.01, -1.25)
+            else {
+                // Langsung pakai rumus Odds Indonesia (Odds Plus/Kali, Odds Minus/Bagi)
                 profit = hitungProfitBersih(odds, stake);
             }
 
-            let bayaran = stake + profit; // Jika single bet modal kembali + profit
+            let bayaran = stake + profit;
 
             document.getElementById('std-result').innerHTML = `
                 <div class="row text-white text-center">
