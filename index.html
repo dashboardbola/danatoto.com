@@ -147,6 +147,13 @@
             margin-top: 20px; padding: 25px; background: #0f172a; border-radius: 12px; 
             border: 2px solid #3b82f6; display: none;
         }
+        
+        .detail-box {
+            margin-top: 20px; padding: 20px; background: rgba(0, 0, 0, 0.3); 
+            border: 1px dashed #3b82f6; border-radius: 8px; text-align: left;
+        }
+        .detail-box h6 { color: #fbbf24; font-weight: 800; margin-bottom: 10px; }
+        .detail-box p { font-size: 0.9rem; color: #cbd5e1 !important; margin-bottom: 5px; line-height: 1.5; }
 
         .max-width-calc { max-width: 850px; margin: 0 auto; }
 
@@ -266,7 +273,7 @@
                         <h5 class="fw-bold mb-3" id="std-title">Kalkulator Taruhan</h5>
                         <div class="row g-3 align-items-end">
                             <div class="col-md-4">
-                                <label class="form-label-custom">Odds (Desimal / Indo Minus)</label>
+                                <label class="form-label-custom" id="std-odds-label">Odds (Desimal / Indo Minus)</label>
                                 <input type="number" id="std-odds" step="0.01" class="form-control form-control-custom" placeholder="Contoh: 1.50 atau -1.25">
                             </div>
                             <div class="col-md-4">
@@ -366,17 +373,14 @@
                         <div class="row g-3">
                             <div class="col-md-4 text-start">
                                 <label class="form-label-custom">Username Teman / CS</label>
-                                <!-- required DIHAPUS AGAR TIDAK DOUBLE POPUP -->
                                 <input type="text" id="add-username" class="form-control-login w-100" placeholder="Username...">
                             </div>
                             <div class="col-md-4 text-start">
                                 <label class="form-label-custom">Password</label>
-                                <!-- required DIHAPUS AGAR TIDAK DOUBLE POPUP -->
                                 <input type="password" id="add-password" class="form-control-login w-100" placeholder="Password...">
                             </div>
                             <div class="col-md-4 text-start">
                                 <label class="form-label-custom">IP Filtering</label>
-                                <!-- required DIHAPUS AGAR TIDAK DOUBLE POPUP -->
                                 <input type="text" id="add-ip" class="form-control-login w-100" placeholder="IP Address...">
                             </div>
                             <div class="col-12"><button type="submit" class="btn btn-primary w-100 mt-2 fw-bold py-3" style="border-radius: 12px; font-weight: 800;">DAFTARKAN SECARA PERMANEN</button></div>
@@ -388,7 +392,8 @@
 
         </div> 
     </div> 
-         <script>
+
+    <script>
         // ================= PENGATURAN LINK APPS SCRIPT =================
         // TULIS LINK WEB APP GOOGLE SCRIPT KAMU DI BAWAH INI:
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTRS7adbZcLQffrDaE4JF6NukmYtSHfDdT6zB1AqxpGgsibRAn1IVv7jjBXvO3ijacDQ/exec';
@@ -588,7 +593,7 @@
                 document.getElementById('std-odds').value = '';
                 document.getElementById('std-stake').value = '';
                 
-                const stdLabel = document.querySelector('label[for="std-odds"]') || document.getElementById('calc-standard').querySelector('.form-label-custom');
+                const stdLabel = document.getElementById('std-odds-label');
                 if(stdLabel) stdLabel.innerText = 'Odds (Desimal / Indo)';
                 document.getElementById('std-odds').placeholder = 'Contoh: 2.50 / 0.85 / -1.25';
                 
@@ -626,6 +631,7 @@
             let odds = parseFloat(document.getElementById('std-odds').value);
             let stake = parseFloat(document.getElementById('std-stake').value);
             let type = document.getElementById('calc-filter').value; 
+            let typeTitle = document.getElementById('std-title').innerText.replace('Kalkulator ', '');
             
             if (isNaN(odds) || odds === 0) { alert("Odds wajib diisi! (Tidak boleh 0)"); return; }
             if (isNaN(stake) || stake <= 0) { alert("Nominal taruhan harus lebih dari 0!"); return; }
@@ -633,29 +639,55 @@
             let profit = 0;
             let bayaran = 0;
             let rumusDipakai = "";
-            
-            // DAFTAR JENIS PERMAINAN YANG PAKAI RUMUS (ODDS - 1) x BET
+            let detailHtml = "";
             const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
             
             if (euOddsTypes.includes(type)) {
-                // LANGKAH 1: Konversi dulu angka apapun ke Odds Desimal
+                // KONVERSI KE DESIMAL DULU
                 let finalOddsDesimal = hitungOddsDesimal(odds);
-                
-                // LANGKAH 2: Pakai rumus yang kamu mau (Odds Desimal - 1) x Bet
                 profit = (finalOddsDesimal - 1) * stake;
                 bayaran = stake + profit;
                 
-                rumusDipakai = `✅ Rumus Terpakai: (Odds Desimal - 1) x Bet<br>Detail: (${finalOddsDesimal.toFixed(2)} - 1) x ${formatRupiah(stake)}`;
+                rumusDipakai = `✅ Rumus Terpakai: (Odds Desimal - 1) x Bet`;
+                
+                detailHtml = `
+                    <div class="detail-box">
+                        <h6>📝 PENJELASAN PERHITUNGAN ${typeTitle.toUpperCase()}:</h6>
+                        <p>1. Odds Awal yang dimasukkan: <b>${odds}</b></p>
+                        <p>2. Jika odds di bawah 1.00 (format Indo), dikonversi dulu ke Odds Desimal Eropa.</p>
+                        <p>3. Odds Desimal Final: <b>${finalOddsDesimal.toFixed(2)}</b></p>
+                        <p>4. Rumus: <b>(Odds Desimal - 1) x Taruhan</b></p>
+                        <p>5. Hitung: (${finalOddsDesimal.toFixed(2)} - 1) x ${formatRupiah(stake)}</p>
+                        <p>6. Profit Bersih: <b class="text-success">${formatRupiah(profit)}</b></p>
+                        <p>7. Total Dibayarkan: Modal (${formatRupiah(stake)}) + Profit (${formatRupiah(profit)}) = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
+                    </div>
+                `;
             } else {
-                // RUMUS HANDICAP & OVER/UNDER (ODDS INDONESIA)
+                // RUMUS HANDICAP & OVER/UNDER
+                let rumusHitung = "";
                 if(odds >= 1.00) {
                     profit = (odds - 1) * stake;
-                    rumusDipakai = `✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)`;
+                    rumusHitung = `(${odds.toFixed(2)} - 1) x ${formatRupiah(stake)}`;
+                } else if(odds >= 0) {
+                    profit = stake * odds;
+                    rumusHitung = `${formatRupiah(stake)} x ${odds.toFixed(2)}`;
                 } else {
-                    profit = hitungProfitBersih(odds, stake);
-                    rumusDipakai = `✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)`;
+                    profit = stake / Math.abs(odds);
+                    rumusHitung = `${formatRupiah(stake)} / ${Math.abs(odds).toFixed(2)}`;
                 }
                 bayaran = stake + profit;
+                rumusDipakai = `✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)`;
+                
+                detailHtml = `
+                    <div class="detail-box">
+                        <h6>📝 PENJELASAN PERHITUNGAN ${typeTitle.toUpperCase()}:</h6>
+                        <p>1. Odds yang dimasukkan: <b>${odds}</b> (Format Indonesia)</p>
+                        <p>2. Rumus: <b>Taruhan x Odds</b> (Jika plus) atau <b>Taruhan / |Odds|</b> (Jika minus)</p>
+                        <p>3. Hitung: ${rumusHitung}</p>
+                        <p>4. Profit Bersih: <b class="text-success">${formatRupiah(profit)}</b></p>
+                        <p>5. Total Dibayarkan: Modal (${formatRupiah(stake)}) + Profit (${formatRupiah(profit)}) = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
+                    </div>
+                `;
             }
 
             document.getElementById('std-result').innerHTML = `
@@ -674,6 +706,7 @@
                         <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
                     </div>
                 </div>
+                ${detailHtml}
             `;
             document.getElementById('std-result').style.display = 'block';
         }
@@ -682,30 +715,48 @@
             let odds = parseFloat(document.getElementById('ah-odds').value);
             let stake = parseFloat(document.getElementById('ah-stake').value);
             let status = document.getElementById('ah-status').value;
+            let statusText = document.getElementById('ah-status').options[document.getElementById('ah-status').selectedIndex].text;
 
             if (isNaN(odds) || odds === 0 || isNaN(stake) || stake <= 0) { alert("Lengkapi data Odds & Taruhan!"); return; }
 
             let profit = 0;
             let bayaran = 0;
+            let rumusHitung = "";
 
             if(status === 'win-full') {
                 profit = hitungProfitBersih(odds, stake);
+                rumusHitung = odds >= 0 ? `${formatRupiah(stake)} x ${odds.toFixed(2)}` : `${formatRupiah(stake)} / ${Math.abs(odds).toFixed(2)}`;
                 bayaran = stake + profit;
             } else if(status === 'win-half') {
-                profit = hitungProfitBersih(odds, stake) / 2;
+                let fullProfit = hitungProfitBersih(odds, stake);
+                profit = fullProfit / 2;
+                rumusHitung = `${formatRupiah(fullProfit)} / 2`;
                 bayaran = stake + profit;
             } else if(status === 'lose-half') {
                 profit = -(stake / 2);
+                rumusHitung = `-${formatRupiah(stake)} / 2`;
                 bayaran = stake + profit; 
             } else if(status === 'lose-full') {
                 profit = -stake;
+                rumusHitung = `-${formatRupiah(stake)}`;
                 bayaran = 0; 
             } else if(status === 'draw') {
                 profit = 0;
+                rumusHitung = `0 (Push/Seri)`;
                 bayaran = stake; 
             }
 
             let colorClass = profit > 0 ? 'text-success' : (profit < 0 ? 'text-danger' : 'text-warning');
+            let detailHtml = `
+                <div class="detail-box">
+                    <h6>📝 PENJELASAN PERHITUNGAN ASIAN HANDICAP:</h6>
+                    <p>1. Status Taruhan: <b>${statusText}</b></p>
+                    <p>2. Odds: <b>${odds.toFixed(2)}</b> | Taruhan: <b>${formatRupiah(stake)}</b></p>
+                    <p>3. Rumus Hitung Profit: ${rumusHitung}</p>
+                    <p>4. Profit/Kerugian Bersih: <b class="${colorClass}">${formatRupiah(profit)}</b></p>
+                    <p>5. Total Dibayarkan: Modal (${formatRupiah(stake)}) + Profit (${formatRupiah(profit)}) = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
+                </div>
+            `;
 
             document.getElementById('ah-result').innerHTML = `
                 <div class="row text-white text-center">
@@ -722,6 +773,7 @@
                         <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
                     </div>
                 </div>
+                ${detailHtml}
             `;
             document.getElementById('ah-result').style.display = 'block';
         }
@@ -731,20 +783,40 @@
             if(stake === 0) { alert("Masukkan nominal taruhan!"); return; }
 
             let arrOdds = [];
+            let detailSteps = [];
             for(let i=1; i<=6; i++) {
                 let val = parseFloat(document.getElementById('p-odds'+i).value) || 0;
-                if(val !== 0) arrOdds.push(val);
+                if(val !== 0) {
+                    arrOdds.push(val);
+                    let decVal = hitungOddsDesimal(val);
+                    detailSteps.push(`Tim ${i}: Odds ${val} -> Dikonversi jadi Desimal <b>${decVal.toFixed(2)}</b>`);
+                }
             }
 
             if(arrOdds.length < 2) { alert("Parlay minimal harus ada 2 tim!"); return; }
 
             let totalOddsDecimal = 1;
-            arrOdds.forEach(o => {
-                totalOddsDecimal *= hitungOddsDesimal(o);
+            let perkalianStr = "";
+            arrOdds.forEach((o, idx) => {
+                let dec = hitungOddsDesimal(o);
+                totalOddsDecimal *= dec;
+                perkalianStr += dec.toFixed(2) + (idx < arrOdds.length - 1 ? " x " : "");
             });
 
             let bayaran = stake * totalOddsDecimal;
             let profit = bayaran - stake;
+
+            let detailHtml = `
+                <div class="detail-box">
+                    <h6>📝 PENJELASAN PERHITUNGAN PARLAY:</h6>
+                    ${detailSteps.map(step => `<p>• ${step}</p>`).join('')}
+                    <hr class="my-1" style="border-color: #334155;">
+                    <p>1. Rumus Parlay: <b>Kali semua Odds Desimal</b></p>
+                    <p>2. Hitung: ${perkalianStr} = <b>${totalOddsDecimal.toFixed(2)}</b></p>
+                    <p>3. Total Bayaran: Taruhan x Total Odds = ${formatRupiah(stake)} x ${totalOddsDecimal.toFixed(2)} = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
+                    <p>4. Profit Bersih: Total Bayaran (${formatRupiah(bayaran)}) - Modal (${formatRupiah(stake)}) = <b class="text-success">${formatRupiah(profit)}</b></p>
+                </div>
+            `;
 
             document.getElementById('p-result').innerHTML = `
                 <div class="text-center text-white mb-3">
@@ -765,6 +837,7 @@
                         <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
                     </div>
                 </div>
+                ${detailHtml}
             `;
             document.getElementById('p-result').style.display = 'block';
         }
@@ -774,43 +847,76 @@
             if(stake === 0) { alert("Masukkan nominal taruhan!"); return; }
 
             let items = [];
+            let detailSteps = [];
             for(let i=1; i<=6; i++) {
                 let odds = parseFloat(document.getElementById('mp-odds'+i).value) || 0;
                 let status = document.getElementById('mp-status'+i).value;
-                if(odds !== 0) items.push({odds, status});
+                let statusText = document.getElementById('mp-status'+i).options[document.getElementById('mp-status'+i).selectedIndex].text;
+                if(odds !== 0) items.push({odds, status, statusText, tim: i});
             }
 
             if(items.length < 2) { alert("Mix Parlay minimal harus ada 2 tim!"); return; }
 
             let isLoseFull = false;
             let totalOddsDecimal = 1;
+            let perkalianStr = "";
 
-            items.forEach(item => {
+            items.forEach((item, idx) => {
                 let decOdds = hitungOddsDesimal(item.odds);
 
                 if(item.status === 'win') {
                     totalOddsDecimal *= decOdds;
+                    perkalianStr += decOdds.toFixed(2) + (idx < items.length - 1 ? " x " : "");
+                    detailSteps.push(`Tim ${item.tim}: Menang Penuh (Odds ${item.odds} -> Desimal ${decOdds.toFixed(2)})`);
                 } else if(item.status === 'win-half') {
                     let halfDecOdds = 1 + ((decOdds - 1) / 2);
                     totalOddsDecimal *= halfDecOdds;
+                    perkalianStr += halfDecOdds.toFixed(2) + (idx < items.length - 1 ? " x " : "");
+                    detailSteps.push(`Tim ${item.tim}: Menang Setengah (Odds Desimal ${decOdds.toFixed(2)} -> Diperhitungkan ${halfDecOdds.toFixed(2)})`);
                 } else if(item.status === 'lose-half') {
                     totalOddsDecimal *= 0.5;
+                    perkalianStr += "0.50" + (idx < items.length - 1 ? " x " : "");
+                    detailSteps.push(`Tim ${item.tim}: Kalah Setengah (Diperhitungkan 0.50)`);
                 } else if(item.status === 'draw') {
                     totalOddsDecimal *= 1;
+                    perkalianStr += "1.00" + (idx < items.length - 1 ? " x " : "");
+                    detailSteps.push(`Tim ${item.tim}: Seri/Push (Diperhitungkan 1.00)`);
                 } else if(item.status === 'lose') {
                     isLoseFull = true;
+                    detailSteps.push(`Tim ${item.tim}: Kalah Penuh (Tiket Gagal Total)`);
                 }
             });
 
             let bayaran = 0;
             let profit = 0;
+            let detailHtml = "";
             
             if(isLoseFull) {
                 bayaran = 0;
                 profit = -stake;
+                detailHtml = `
+                    <div class="detail-box">
+                        <h6 class="text-danger">📝 PENJELASAN PERHITUNGAN MIX PARLAY:</h6>
+                        ${detailSteps.map(step => `<p>• ${step}</p>`).join('')}
+                        <hr class="my-1" style="border-color: #334155;">
+                        <p>Status: <b class="text-danger">KALAH TOTAL</b></p>
+                        <p>Ada tim yang kalah penuh, maka tiket hangus. Modal hangus sebesar <b class="text-danger">${formatRupiah(stake)}</b></p>
+                    </div>
+                `;
             } else {
                 bayaran = stake * totalOddsDecimal;
                 profit = bayaran - stake;
+                detailHtml = `
+                    <div class="detail-box">
+                        <h6>📝 PENJELASAN PERHITUNGAN MIX PARLAY:</h6>
+                        ${detailSteps.map(step => `<p>• ${step}</p>`).join('')}
+                        <hr class="my-1" style="border-color: #334155;">
+                        <p>1. Rumus: Kali semua Odds yang sudah disesuaikan statusnya</p>
+                        <p>2. Hitung: ${perkalianStr} = <b>${totalOddsDecimal.toFixed(2)}</b></p>
+                        <p>3. Total Bayaran: ${formatRupiah(stake)} x ${totalOddsDecimal.toFixed(2)} = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
+                        <p>4. Profit Bersih: Total Bayaran - Modal = <b class="text-success">${formatRupiah(profit)}</b></p>
+                    </div>
+                `;
             }
 
             let colorClass = profit >= 0 ? 'text-success' : 'text-danger';
@@ -834,7 +940,10 @@
                         <span class="fw-bold text-warning fs-5">${formatRupiah(bayaran)}</span>
                     </div>
                 </div>
+                ${detailHtml}
             `;
             document.getElementById('mp-result').style.display = 'block';
         }
     </script>
+</body>
+</html>
