@@ -26,9 +26,15 @@
         }
 
         body { 
-            background-color: #f1f5f9; margin: 0; line-height: 1.6; 
+            background-color: #0f172a; margin: 0; line-height: 1.6; 
             background-image: var(--bg-inner-image);
             background-size: cover; background-attachment: fixed; background-position: center;
+            position: relative;
+        }
+        /* OVERLAY AGAR BACKGROUND TIDAK BIKIN TULISAN SUSAH DIBACA */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); z-index: -1;
         }
         .text-muted { color: #d1d5db !important; }
 
@@ -37,7 +43,7 @@
         html:not(.logged-in) #login-page { display: flex !important; }
 
         #login-page { 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #3b82f6 100%); 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(59, 130, 246, 0.8) 100%); 
             background-image: var(--bg-outer-image);
             background-size: cover; background-position: center;
             justify-content: center; align-items: center; height: 100vh; 
@@ -45,7 +51,7 @@
         
         .login-card {
             border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.12) !important; 
-            background: rgba(19, 11, 43, 0.75) !important; backdrop-filter: blur(10px) !important;
+            background: rgba(19, 11, 43, 0.85) !important; backdrop-filter: blur(12px) !important;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
             width: 100%; max-width: 520px; position: relative; overflow: visible;
             border-top: 6px solid var(--primary-color) !important;
@@ -80,6 +86,7 @@
             padding: 20px 0; display: flex; flex-direction: column;
             border-right: 2px solid #3b82f6;
             box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
         .sidebar::after {
             content: '';
@@ -108,8 +115,22 @@
         /* PERBAIKAN LOGOUT: MARGIN-TOP DIHAPUS AGAR NAIK ATAS */
         .sidebar-footer { margin-top: 0px; padding: 15px 12px; border-top: 1px solid #334155; }
         
-        .main-content { margin-left: 280px; padding: 30px 40px; min-height: 100vh; width: calc(100% - 280px); }
-        .page-title { font-weight: 900; font-size: 2.2rem; color: #ffffff; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+        .main-content { 
+            margin-left: 280px; padding: 30px 40px; min-height: 100vh; width: calc(100% - 280px); 
+        }
+        
+        /* TULISAN ATAS DIBUAT CANTIK SEPERTI TABEL/HEADER */
+        .page-title { 
+            font-weight: 900; font-size: 1.5rem; color: #ffffff; 
+            margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+            padding: 15px 25px; border-radius: 12px; 
+            border-left: 6px solid var(--primary-color); 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+            display: flex; align-items: center; gap: 10px;
+            backdrop-filter: blur(4px);
+        }
+        .page-title i { font-size: 1.8rem; color: #fbbf24; }
         
         .card-custom {
             border: none; border-radius: 16px; 
@@ -212,7 +233,7 @@
         <div class="main-content">
             
             <div id="page-home" class="page-section" style="display: block;">
-                <div class="page-title">Dashboard Utama</div>
+                <div class="page-title"><i class="bi bi-house-fill"></i> Dashboard Utama</div>
                 <div class="row g-4 d-flex align-items-stretch">
                     <div class="col-md-4 d-flex align-items-stretch" onclick="document.querySelector('[onclick*=\'page-jenis\']').click()" style="cursor:pointer;">
                         <div class="card-custom w-100"><i class="bi bi-trophy-fill text-warning fs-3 mb-2"></i><h5>Jenis Permainan</h5><p class="text-muted">Lihat semua jenis taruhan bola</p></div>
@@ -227,7 +248,7 @@
             </div>
 
             <div id="page-jenis" class="page-section" style="display: none;">
-                <div class="page-title">Semua Jenis Permainan Bola</div>
+                <div class="page-title"><i class="bi bi-trophy-fill"></i> Semua Jenis Permainan Bola</div>
                 <div class="row g-4 d-flex align-items-stretch">
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-blue"><i class="bi bi-1-circle-fill"></i></div><h5>1X2</h5><p>Menebak hasil akhir pertandingan dalam 3 pilihan: <b>1</b> (Tuan Rumah Menang), <b>X</b> (Seri), <b>2</b> (Tamu Menang). Contoh: Liverpool vs Arsenal, pilih "1" berarti Liverpool menang.</p></div></div>
                     <div class="col-lg-4 col-md-6 d-flex align-items-stretch"><div class="card-custom w-100"><div class="icon-box bg-red"><i class="bi bi-arrow-left-right"></i></div><h5>Handicap</h5><p>Sistem pemberian voor (plus/minus) kepada tim unggul agar taruhan seimbang. Contoh: Voor -1 berarti tim favorit harus menang minimal 2 gol agar taruhan menang penuh.</p></div></div>
@@ -245,7 +266,7 @@
             </div>
 
             <div id="page-kalkulator" class="page-section" style="display: none;">
-                <div class="page-title">Perhitungan Bola</div>
+                <div class="page-title"><i class="bi bi-calculator-fill"></i> Perhitungan Bola</div>
                 <div class="card-custom max-width-calc">
                     <div class="row mb-4">
                         <div class="col-12">
@@ -366,7 +387,7 @@
             </div>
 
             <div id="page-add-user" class="page-section" style="display: none;">
-                <div class="page-title">Management User</div>
+                <div class="page-title"><i class="bi bi-person-plus-fill"></i> Management User</div>
                 <div class="login-card p-4 mx-auto" style="border-top: 6px solid var(--primary-color) !important; max-width: 1000px;">
                     <h3 class="text-center mb-4 style-label" style="color: #ffffff; font-weight: 900; text-transform: uppercase;">TAMBAH USER BARU</h3>
                     <form id="add-user-form" onsubmit="prosesAddUser(event)">
