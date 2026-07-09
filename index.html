@@ -618,15 +618,6 @@
             }
         }
 
-        // RUMUS UNTUK HANDICAP, OU, SINGLE BET (PAKAI ODDS INDONESIA)
-        function hitungProfitBersih(odds, stake) {
-            if(odds >= 0) {
-                return stake * odds;
-            } else {
-                return stake / Math.abs(odds);
-            }
-        }
-
         function calcStandard() {
             let odds = parseFloat(document.getElementById('std-odds').value);
             let stake = parseFloat(document.getElementById('std-stake').value);
@@ -640,14 +631,17 @@
             let bayaran = 0;
             let rumusDipakai = "";
             let detailHtml = "";
-            const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-htft', 'calc-outright'];
+            
+            // Grup 1: 1X2, Correct Score, Double Chance, dll (Pakai Odds Desimal Eropa)
+            const euOddsTypes = ['calc-1x2', 'calc-cs', 'calc-dc', 'calc-oe', 'calc-tg', 'calc-outright'];
+            
+            // Grup 2: Handicap, Single Bet, Over/Under, HT/FT (Pakai Odds Indonesia)
+            const indoOddsTypes = ['calc-handicap', 'calc-ou', 'calc-single', 'calc-htft'];
             
             if (euOddsTypes.includes(type)) {
-                // KONVERSI KE DESIMAL DULU
                 let finalOddsDesimal = hitungOddsDesimal(odds);
                 profit = (finalOddsDesimal - 1) * stake;
                 bayaran = stake + profit;
-                
                 rumusDipakai = `✅ Rumus Terpakai: (Odds Desimal - 1) x Bet`;
                 
                 detailHtml = `
@@ -663,29 +657,33 @@
                     </div>
                 `;
             } else {
-                // RUMUS HANDICAP & OVER/UNDER
+                // INI BAGIAN HANDICAP, SINGLE BET, OU, HT/FT (Odds Indonesia)
                 let rumusHitung = "";
-                if(odds >= 1.00) {
-                    profit = (odds - 1) * stake;
-                    rumusHitung = `(${odds.toFixed(2)} - 1) x ${formatRupiah(stake)}`;
-                } else if(odds >= 0) {
+                if(odds > 0) {
+                    // Odds Plus
                     profit = stake * odds;
                     rumusHitung = `${formatRupiah(stake)} x ${odds.toFixed(2)}`;
+                    rumusDipakai = `✅ Rumus Terpakai: Odds Indo Plus (Taruhan x Odds)`;
                 } else {
+                    // Odds Minus
                     profit = stake / Math.abs(odds);
                     rumusHitung = `${formatRupiah(stake)} / ${Math.abs(odds).toFixed(2)}`;
+                    rumusDipakai = `✅ Rumus Terpakai: Odds Indo Minus (Taruhan / Odds)`;
                 }
                 bayaran = stake + profit;
-                rumusDipakai = `✅ Rumus Terpakai: Odds Indonesia (HDP / O-U)`;
                 
                 detailHtml = `
                     <div class="detail-box">
                         <h6>📝 PENJELASAN PERHITUNGAN ${typeTitle.toUpperCase()}:</h6>
-                        <p>1. Odds yang dimasukkan: <b>${odds}</b> (Format Indonesia)</p>
-                        <p>2. Rumus: <b>Taruhan x Odds</b> (Jika plus) atau <b>Taruhan / |Odds|</b> (Jika minus)</p>
-                        <p>3. Hitung: ${rumusHitung}</p>
-                        <p>4. Profit Bersih: <b class="text-success">${formatRupiah(profit)}</b></p>
-                        <p>5. Total Dibayarkan: Modal (${formatRupiah(stake)}) + Profit (${formatRupiah(profit)}) = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
+                        <p>1. Odds yang dimasukkan: <b>${odds.toFixed(2)}</b> (Format Indonesia)</p>
+                        <p>2. Taruhan (Modal): <b>${formatRupiah(stake)}</b></p>
+                        ${odds > 0 ? 
+                            `<p>3. Karena Odds <b>Plus (${odds.toFixed(2)})</b>, rumusnya: <b>Taruhan x Odds</b></p>` : 
+                            `<p>3. Karena Odds <b>Minus (${odds.toFixed(2)})</b>, rumusnya: <b>Taruhan / Nilai Mutlak Odds</b></p>`
+                        }
+                        <p>4. Hitung Detail: ${rumusHitung}</p>
+                        <p>5. Profit Bersih: <b class="text-success">${formatRupiah(profit)}</b></p>
+                        <p>6. Total Dibayarkan: Modal (${formatRupiah(stake)}) + Profit (${formatRupiah(profit)}) = <b class="text-warning">${formatRupiah(bayaran)}</b></p>
                     </div>
                 `;
             }
@@ -724,11 +722,11 @@
             let rumusHitung = "";
 
             if(status === 'win-full') {
-                profit = hitungProfitBersih(odds, stake);
-                rumusHitung = odds >= 0 ? `${formatRupiah(stake)} x ${odds.toFixed(2)}` : `${formatRupiah(stake)} / ${Math.abs(odds).toFixed(2)}`;
+                if(odds > 0) { profit = stake * odds; rumusHitung = `${formatRupiah(stake)} x ${odds.toFixed(2)}`; }
+                else { profit = stake / Math.abs(odds); rumusHitung = `${formatRupiah(stake)} / ${Math.abs(odds).toFixed(2)}`; }
                 bayaran = stake + profit;
             } else if(status === 'win-half') {
-                let fullProfit = hitungProfitBersih(odds, stake);
+                let fullProfit = odds > 0 ? stake * odds : stake / Math.abs(odds);
                 profit = fullProfit / 2;
                 rumusHitung = `${formatRupiah(fullProfit)} / 2`;
                 bayaran = stake + profit;
@@ -789,7 +787,12 @@
                 if(val !== 0) {
                     arrOdds.push(val);
                     let decVal = hitungOddsDesimal(val);
-                    detailSteps.push(`Tim ${i}: Odds ${val} -> Dikonversi jadi Desimal <b>${decVal.toFixed(2)}</b>`);
+                    let konversiStr = "";
+                    if(val >= 1.00) konversiStr = `Sudah Desimal`;
+                    else if(val >= 0) konversiStr = `1 + ${val.toFixed(2)}`;
+                    else konversiStr = `1 + (1 / ${Math.abs(val).toFixed(2)})`;
+                    
+                    detailSteps.push(`Tim ${i}: Odds ${val} -> Dikonversi (${konversiStr} = <b>${decVal.toFixed(2)}</b>)`);
                 }
             }
 
